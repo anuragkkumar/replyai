@@ -1,4 +1,11 @@
 import React, { useState } from 'react';
+import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Card } from '../components/ui/card';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { Progress } from '../components/ui/progress';
+import { toast } from 'sonner';
+import { RefreshCw, AlertCircle, Upload, Mic, Sparkles, User } from 'lucide-react';
 import ConversationInput from '../components/ConversationInput';
 import ModeSelector from '../components/ModeSelector';
 import CustomToneInput from '../components/CustomToneInput';
@@ -7,7 +14,9 @@ import GenerateButton from '../components/GenerateButton';
 import ReplyOutput from '../components/ReplyOutput';
 import HeroSection from '../components/HeroSection';
 import Footer from '../components/Footer';
-import { toast } from 'sonner';
+import StyleToggle from '../components/StyleToggle';
+import ConversationMemory from '../components/ConversationMemory';
+import FileUploadSection from '../components/FileUploadSection';
 import { validateInput, handleApiError } from '../utils/homepageHelpers';
 import { 
   CHAR_LIMIT, 
@@ -20,16 +29,83 @@ import {
 const HomePage = () => {
   const [conversation, setConversation] = useState('');
   const [selectedMode, setSelectedMode] = useState('flirty');
+  const [selectedStyle, setSelectedStyle] = useState('ai'); // 'ai' or 'human'
   const [customTone, setCustomTone] = useState('');
   const [reply, setReply] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [requestCount, setRequestCount] = useState(0);
   const [copied, setCopied] = useState(false);
+  
+  // Conversation memory
+  const [conversationHistory, setConversationHistory] = useState([]);
+  const [contextMemory, setContextMemory] = useState('');
+  
+  // File upload states
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingAudio, setUploadingAudio] = useState(false);
 
   const charCount = conversation.length;
   const isNearLimit = charCount > NEAR_LIMIT_THRESHOLD;
   const isAtLimit = charCount >= CHAR_LIMIT;
+
+  const handleImageUpload = async (file) => {
+    setUploadingImage(true);
+    setError('');
+    
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch(`${BACKEND_URL}/api/extract-text`, {
+        method: 'POST',
+        body: formData,
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.detail || 'Failed to extract text from image');
+      }
+      
+      setConversation(data.text);
+      toast.success('Text extracted from screenshot!');
+    } catch (err) {
+      setError(err.message);
+      toast.error('Failed to extract text from image');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+  
+  const handleAudioUpload = async (file) => {
+    setUploadingAudio(true);
+    setError('');
+    
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch(`${BACKEND_URL}/api/transcribe`, {
+        method: 'POST',
+        body: formData,
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.detail || 'Failed to transcribe audio');
+      }
+      
+      setConversation(data.text);
+      toast.success('Audio transcribed successfully!');
+    } catch (err) {
+      setError(err.message);
+      toast.error('Failed to transcribe audio');
+    } finally {
+      setUploadingAudio(false);
+    }
+  };
 
   const generateReply = async () => {
     if (!validateInput(conversation, selectedMode, customTone, setError)) {
@@ -48,7 +124,10 @@ const HomePage = () => {
         body: JSON.stringify({
           messages: conversation,
           mode: selectedMode,
+          style: selectedStyle,
           custom_tone: selectedMode === 'custom' ? customTone : null,
+          conversation_history: conversationHistory,
+          context: contextMemory || null,
         }),
       });
 
@@ -60,6 +139,10 @@ const HomePage = () => {
       }
 
       setReply(data.reply);
+      
+      // Add to conversation history
+      setConversationHistory(prev => [...prev, conversation, data.reply]);
+      
       setRequestCount(prev => Math.min(prev + 1, MAX_REQUEST_COUNT));
       toast.success('Reply generated successfully!');
     } catch (err) {
@@ -80,6 +163,11 @@ const HomePage = () => {
   const regenerate = () => {
     generateReply();
   };
+  
+  const clearHistory = () => {
+    setConversationHistory([]);
+    toast.info('Conversation history cleared');
+  };
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -89,12 +177,34 @@ const HomePage = () => {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Left Column - Input */}
         <div className="space-y-6">
+          {/* File Upload Section */}
+          <FileUploadSection 
+            onImageUpload={handleImageUpload}
+            onAudioUpload={handleAudioUpload}
+            uploadingImage={uploadingImage}
+            uploadingAudio={uploadingAudio}
+          />
+          
           <ConversationInput 
             conversation={conversation}
             setConversation={setConversation}
             charCount={charCount}
             isNearLimit={isNearLimit}
             isAtLimit={isAtLimit}
+          />
+          
+          {/* Conversation Memory */}
+          <ConversationMemory 
+            contextMemory={contextMemory}
+            setContextMemory={setContextMemory}
+            conversationHistory={conversationHistory}
+            onClearHistory={clearHistory}
+          />
+          
+          {/* Style Toggle */}
+          <StyleToggle 
+            selectedStyle={selectedStyle}
+            setSelectedStyle={setSelectedStyle}
           />
 
           <ModeSelector 
