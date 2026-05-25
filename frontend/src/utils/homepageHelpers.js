@@ -8,16 +8,29 @@ export const getCharCounterColor = (charCount, isNearLimit, isAtLimit) => {
 
 export const handleApiError = (response, data, setError, toast) => {
   if (response.status === 429) {
-    setError('Too many requests, please wait a moment.');
-    toast.error('Rate limit reached. Please wait a moment.');
+    if (data.detail && data.detail.includes('Come back tomorrow')) {
+      setError("You've used a lot of requests today. Come back tomorrow!");
+      toast.error("You've used a lot of requests today. Come back tomorrow!");
+    } else {
+      setError('Too many requests, please wait a moment.');
+      toast.error('Rate limit reached. Please wait a moment.');
+    }
   } else {
     setError(data.detail || 'Failed to generate reply');
   }
 };
 
 export const validateInput = (conversation, selectedMode, customTone, setError) => {
-  if (!conversation.trim()) {
+  const cleaned = conversation.trim();
+  
+  if (!cleaned) {
     setError('Please paste a conversation first');
+    return false;
+  }
+  
+  // Minimum 10 characters
+  if (cleaned.length < 10) {
+    setError('Message must be at least 10 characters');
     return false;
   }
 
@@ -27,4 +40,33 @@ export const validateInput = (conversation, selectedMode, customTone, setError) 
   }
 
   return true;
+};
+
+// Generate browser fingerprint
+export const generateFingerprint = () => {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.textBaseline = 'top';
+  ctx.font = '14px Arial';
+  ctx.fillText('fingerprint', 2, 2);
+  
+  const data = [
+    navigator.userAgent,
+    navigator.language,
+    screen.width,
+    screen.height,
+    screen.colorDepth,
+    new Date().getTimezoneOffset(),
+    canvas.toDataURL(),
+  ].join('|');
+  
+  // Simple hash function
+  let hash = 0;
+  for (let i = 0; i < data.length; i++) {
+    const char = data.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  
+  return Math.abs(hash).toString(16);
 };

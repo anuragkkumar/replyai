@@ -11,10 +11,13 @@ from enum import Enum
 import os
 from dotenv import load_dotenv
 import re
-from datetime import datetime
-from typing import Callable, List, Optional
+from datetime import datetime, timedelta
+from typing import Callable, List, Optional, Dict
 import base64
 import io
+import httpx
+import hashlib
+from collections import defaultdict
 
 # Load environment variables
 load_dotenv()
@@ -25,6 +28,14 @@ app = FastAPI(title="ReplyAI")
 # Rate limiter - 10 requests per minute per IP
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
+
+# In-memory storage for rate limiting and fingerprinting
+ip_requests: Dict[str, Dict[str, any]] = defaultdict(lambda: {"minute": [], "daily": 0, "last_reset": datetime.utcnow()})
+fingerprint_requests: Dict[str, Dict[str, any]] = defaultdict(lambda: {"daily": 0, "last_reset": datetime.utcnow()})
+
+# reCAPTCHA config
+RECAPTCHA_SECRET_KEY = os.getenv("RECAPTCHA_SECRET_KEY")
+RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
 
 # CORS - Allow all origins for hackathon
 app.add_middleware(
@@ -83,6 +94,94 @@ Skip capitals sometimes. Use '...' frequently. Add occasional small typos (like 
 Keep it short and punchy. Start with phrases like 'omg', 'okay so', 'ngl tho' sometimes. Make it feel authentic and casual."""
 }
 
+# Anti-bot functions
+def check_ip_rate_limit(ip: str) -> bool:
+    """Check if IP has exceeded rate limits"""
+    now = datetime.utcnow()
+    ip_data = ip_requests[ip]
+    
+    # Reset daily count if it's a new day
+    if (now - ip_data["last_reset"]).days >= 1:
+        ip_data["daily"] = 0
+        ip_data["last_reset"] = now
+    
+    # Check daily limit (50 per day)
+    if ip_data["daily"] >= 50:
+        return False
+    
+    # Check per-minute limit (10 per minute)
+    ip_data["minute"] = [t for t in ip_data["minute"] if (now - t).seconds < 60]
+    if len(ip_data["minute"]) >= 10:
+        return False
+    
+    return True
+
+def record_ip_request(ip: str):
+    """Record a request from an IP"""
+    now = datetime.utcnow()
+    ip_data = ip_requests[ip]
+    ip_data["minute"].append(now)
+    ip_data["daily"] += 1
+
+def check_fingerprint_limit(fingerprint: str) -> bool:
+    """Check if fingerprint has exceeded daily limit"""
+    now = datetime.utcnow()
+    fp_data = fingerprint_requests[fingerprint]
+    
+    # Reset daily count if it's a new day
+    if (now - fp_data["last_reset"]).days >= 1:
+        fp_data["daily"] = 0
+        fp_data["last_reset"] = now
+    
+    # Check daily limit (50 per day)
+    if fp_data["daily"] >= 50:
+        return False
+    
+    return True
+
+def record_fingerprint_request(fingerprint: str):
+    """Record a request from a fingerprint"""
+    fp_data = fingerprint_requests[fingerprint]
+    fp_data["daily"] += 1
+
+async def verify_recaptcha(token: str, ip: str) -> bool:
+    """Verify reCAPTCHA token"""
+    if not RECAPTCHA_SECRET_KEY:
+        return True  # Skip if no key configured
+    
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                RECAPTCHA_VERIFY_URL,
+                data={
+                    "secret": RECAPTCHA_SECRET_KEY,
+                    "response": token,
+                    "remoteip": ip
+                }
+            )
+            result = response.json()
+            
+            # Check if successful and score is above threshold (0.5)
+            return result.get("success", False) and result.get("score", 0) >= 0.5
+    except Exception as e:
+        print(f"reCAPTCHA verification error: {e}")
+        return True  # Allow on error to not block real users
+
+def validate_message(message: str) -> tuple[bool, str]:
+    """Validate message content"""
+    # Strip whitespace
+    cleaned = message.strip()
+    
+    # Check minimum length
+    if len(cleaned) < 10:
+        return False, "Message must be at least 10 characters"
+    
+    # Check if only special characters or spaces
+    if re.match(r'^[^a-zA-Z0-9]+$', cleaned):
+        return False, "Message must contain alphanumeric characters"
+    
+    return True, ""
+
 # Input sanitization
 def sanitize_input(text: str) -> str:
     """Remove control characters and normalize whitespace"""
@@ -98,6 +197,9 @@ class GenerateRequest(BaseModel):
     custom_tone: Optional[str] = Field(None, max_length=200)
     conversation_history: Optional[List[str]] = Field(default=[], max_items=50)
     context: Optional[str] = Field(None, max_length=500)
+    recaptcha_token: str = Field(..., min_length=1)
+    fingerprint: Optional[str] = Field(None, max_length=64)
+    honeypot: Optional[str] = Field(None, max_length=0)  # Should always be empty
     
     @validator('messages')
     def validate_messages(cls, v):
@@ -110,6 +212,12 @@ class GenerateRequest(BaseModel):
         if 'mode' in values and values['mode'] == ReplyMode.custom:
             if not v or not v.strip():
                 raise ValueError("Custom tone is required when mode is 'custom'")
+        return v
+    
+    @validator('honeypot', always=True)
+    def validate_honeypot(cls, v):
+        if v and len(v) > 0:
+            raise ValueError("Invalid request")
         return v
 
 # Response model
@@ -135,6 +243,16 @@ async def health_check() -> dict:
 async def extract_text_from_image(request: Request, file: UploadFile = File(...)):
     """Extract text from uploaded screenshot using Groq Llama 4 Scout vision"""
     
+    # Get client IP
+    client_ip = get_remote_address(request)
+    
+    # Check IP rate limit
+    if not check_ip_rate_limit(client_ip):
+        raise HTTPException(
+            status_code=429,
+            detail="You've used a lot of requests today. Come back tomorrow!"
+        )
+    
     # Validate file type
     allowed_types = {"image/png", "image/jpeg", "image/jpg", "image/webp"}
     if file.content_type not in allowed_types:
@@ -150,7 +268,7 @@ async def extract_text_from_image(request: Request, file: UploadFile = File(...)
         if len(content) == 0:
             raise HTTPException(status_code=400, detail="Uploaded image is empty")
         
-        if len(content) > 4 * 1024 * 1024:  # 4MB limit for base64
+        if len(content) > 4 * 1024 * 1024:
             raise HTTPException(status_code=413, detail="Image too large. Maximum 4MB.")
         
         # Base64 encode
@@ -181,6 +299,10 @@ async def extract_text_from_image(request: Request, file: UploadFile = File(...)
         )
         
         extracted_text = completion.choices[0].message.content
+        
+        # Record request
+        record_ip_request(client_ip)
+        
         return ExtractTextResponse(text=extracted_text)
         
     except RateLimitExceeded:
@@ -193,6 +315,16 @@ async def extract_text_from_image(request: Request, file: UploadFile = File(...)
 @limiter.limit("10/minute")
 async def transcribe_audio(request: Request, file: UploadFile = File(...)):
     """Transcribe audio using Groq Whisper Large v3"""
+    
+    # Get client IP
+    client_ip = get_remote_address(request)
+    
+    # Check IP rate limit
+    if not check_ip_rate_limit(client_ip):
+        raise HTTPException(
+            status_code=429,
+            detail="You've used a lot of requests today. Come back tomorrow!"
+        )
     
     # Validate file type
     allowed_types = {"audio/mpeg", "audio/mp3", "audio/wav", "audio/x-wav", "audio/ogg", "audio/opus"}
@@ -209,7 +341,7 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...)):
         if len(data) == 0:
             raise HTTPException(status_code=400, detail="Uploaded audio is empty")
         
-        if len(data) > 25 * 1024 * 1024:  # 25MB limit
+        if len(data) > 25 * 1024 * 1024:
             raise HTTPException(status_code=413, detail="Audio too large. Maximum 25MB.")
         
         # Create file-like object
@@ -222,6 +354,9 @@ async def transcribe_audio(request: Request, file: UploadFile = File(...)):
             file=audio_buffer,
             response_format="json",
         )
+        
+        # Record request
+        record_ip_request(client_ip)
         
         return TranscribeResponse(text=transcription.text)
         
@@ -239,6 +374,40 @@ async def generate_reply(request: Request, data: GenerateRequest) -> GenerateRes
     Rate limited to 10 requests per minute per IP
     """
     try:
+        # Get client IP
+        client_ip = get_remote_address(request)
+        
+        # 1. Check honeypot (already validated in model, but double-check)
+        if data.honeypot and len(data.honeypot) > 0:
+            # Silently reject bot
+            raise HTTPException(status_code=400, detail="Invalid request")
+        
+        # 2. Validate message content
+        is_valid, error_msg = validate_message(data.messages)
+        if not is_valid:
+            raise HTTPException(status_code=400, detail=error_msg)
+        
+        # 3. Check IP rate limit
+        if not check_ip_rate_limit(client_ip):
+            raise HTTPException(
+                status_code=429,
+                detail="You've used a lot of requests today. Come back tomorrow!"
+            )
+        
+        # 4. Check fingerprint rate limit
+        if data.fingerprint:
+            if not check_fingerprint_limit(data.fingerprint):
+                raise HTTPException(
+                    status_code=429,
+                    detail="You've used a lot of requests today. Come back tomorrow!"
+                )
+        
+        # 5. Verify reCAPTCHA
+        is_human = await verify_recaptcha(data.recaptcha_token, client_ip)
+        if not is_human:
+            # Silently reject low-score requests (likely bots)
+            raise HTTPException(status_code=403, detail="Request blocked")
+        
         # Sanitize input
         sanitized_messages = sanitize_input(data.messages)
         
@@ -261,7 +430,7 @@ async def generate_reply(request: Request, data: GenerateRequest) -> GenerateRes
         
         # Add conversation history if provided
         if data.conversation_history:
-            for i, msg in enumerate(data.conversation_history[-10:]):  # Last 10 messages
+            for i, msg in enumerate(data.conversation_history[-10:]):
                 role = "assistant" if i % 2 == 0 else "user"
                 messages.append({"role": role, "content": msg})
         
@@ -278,6 +447,11 @@ async def generate_reply(request: Request, data: GenerateRequest) -> GenerateRes
         
         reply_text = response.choices[0].message.content
         
+        # Record successful request
+        record_ip_request(client_ip)
+        if data.fingerprint:
+            record_fingerprint_request(data.fingerprint)
+        
         return GenerateResponse(
             reply=reply_text,
             mode=data.mode.value,
@@ -290,6 +464,8 @@ async def generate_reply(request: Request, data: GenerateRequest) -> GenerateRes
             status_code=429, 
             detail="Too many requests, please wait a moment."
         )
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"Error in generate_reply: {type(e).__name__}: {str(e)}")
         raise HTTPException(
