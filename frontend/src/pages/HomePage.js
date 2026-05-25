@@ -1,11 +1,4 @@
 import React, { useState } from 'react';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Card } from '../components/ui/card';
-import { Alert, AlertDescription } from '../components/ui/alert';
-import { Progress } from '../components/ui/progress';
-import { toast } from 'sonner';
-import { RefreshCw, AlertCircle, Upload, Mic, Sparkles, User } from 'lucide-react';
 import ConversationInput from '../components/ConversationInput';
 import ModeSelector from '../components/ModeSelector';
 import CustomToneInput from '../components/CustomToneInput';
@@ -16,7 +9,7 @@ import HeroSection from '../components/HeroSection';
 import Footer from '../components/Footer';
 import StyleToggle from '../components/StyleToggle';
 import ConversationMemory from '../components/ConversationMemory';
-import FileUploadSection from '../components/FileUploadSection';
+import { toast } from 'sonner';
 import { validateInput, handleApiError } from '../utils/homepageHelpers';
 import { 
   CHAR_LIMIT, 
@@ -29,7 +22,7 @@ import {
 const HomePage = () => {
   const [conversation, setConversation] = useState('');
   const [selectedMode, setSelectedMode] = useState('flirty');
-  const [selectedStyle, setSelectedStyle] = useState('ai'); // 'ai' or 'human'
+  const [selectedStyle, setSelectedStyle] = useState('ai');
   const [customTone, setCustomTone] = useState('');
   const [reply, setReply] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,16 +34,15 @@ const HomePage = () => {
   const [conversationHistory, setConversationHistory] = useState([]);
   const [contextMemory, setContextMemory] = useState('');
   
-  // File upload states
-  const [uploadingImage, setUploadingImage] = useState(false);
-  const [uploadingAudio, setUploadingAudio] = useState(false);
+  // File upload state
+  const [uploadingFile, setUploadingFile] = useState(false);
 
   const charCount = conversation.length;
   const isNearLimit = charCount > NEAR_LIMIT_THRESHOLD;
   const isAtLimit = charCount >= CHAR_LIMIT;
 
   const handleImageUpload = async (file) => {
-    setUploadingImage(true);
+    setUploadingFile(true);
     setError('');
     
     try {
@@ -74,12 +66,12 @@ const HomePage = () => {
       setError(err.message);
       toast.error('Failed to extract text from image');
     } finally {
-      setUploadingImage(false);
+      setUploadingFile(false);
     }
   };
   
   const handleAudioUpload = async (file) => {
-    setUploadingAudio(true);
+    setUploadingFile(true);
     setError('');
     
     try {
@@ -103,7 +95,7 @@ const HomePage = () => {
       setError(err.message);
       toast.error('Failed to transcribe audio');
     } finally {
-      setUploadingAudio(false);
+      setUploadingFile(false);
     }
   };
 
@@ -177,20 +169,15 @@ const HomePage = () => {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Left Column - Input */}
         <div className="space-y-6">
-          {/* File Upload Section */}
-          <FileUploadSection 
-            onImageUpload={handleImageUpload}
-            onAudioUpload={handleAudioUpload}
-            uploadingImage={uploadingImage}
-            uploadingAudio={uploadingAudio}
-          />
-          
           <ConversationInput 
             conversation={conversation}
             setConversation={setConversation}
             charCount={charCount}
             isNearLimit={isNearLimit}
             isAtLimit={isAtLimit}
+            onImageUpload={handleImageUpload}
+            onAudioUpload={handleAudioUpload}
+            uploadingFile={uploadingFile}
           />
           
           {/* Conversation Memory */}
