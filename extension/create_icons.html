@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+<canvas id="icon16" width="16" height="16"></canvas>
+<canvas id="icon48" width="48" height="48"></canvas>
+<canvas id="icon128" width="128" height="128"></canvas>
+<script>
+function createIcon(canvasId, size) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  
+  // Background
+  ctx.fillStyle = '#534AB7';
+  ctx.fillRect(0, 0, size, size);
+  
+  // Simple "R" for ReplyAI
+  ctx.fillStyle = 'white';
+  ctx.font = `bold ${size*0.6}px Arial`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('R', size/2, size/2);
+}
+
+createIcon('icon16', 16);
+createIcon('icon48', 48);
+createIcon('icon128', 128);
+</script>
+</body>
+</html>

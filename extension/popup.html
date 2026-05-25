@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ReplyAI</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 380px;
+      min-height: 400px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0B0B10;
+      color: #F4F4F7;
+      padding: 16px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #26263A;
+    }
+
+    .header-icon {
+      width: 24px;
+      height: 24px;
+      color: #534AB7;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #534AB7, #6259D6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #141423;
+      border: 1px solid #26263A;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 12px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .status-dot.active {
+      background: #2FBF71;
+      box-shadow: 0 0 8px #2FBF71;
+    }
+
+    .status-dot.inactive {
+      background: #E5484D;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .mode-btn {
+      padding: 10px;
+      background: #141423;
+      border: 1px solid #26263A;
+      border-radius: 8px;
+      color: #F4F4F7;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 150ms;
+      text-align: center;
+    }
+
+    .mode-btn:hover {
+      border-color: #8B8BA3;
+    }
+
+    .mode-btn.selected {
+      background: #534AB7;
+      border-color: #534AB7;
+      color: white;
+    }
+
+    .custom-input {
+      width: 100%;
+      padding: 10px;
+      background: #141423;
+      border: 1px solid #26263A;
+      border-radius: 8px;
+      color: #F4F4F7;
+      font-size: 13px;
+      margin-bottom: 12px;
+      font-family: inherit;
+    }
+
+    .custom-input:focus {
+      outline: none;
+      border-color: #534AB7;
+    }
+
+    .generate-btn {
+      width: 100%;
+      padding: 12px;
+      background: #534AB7;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 150ms;
+      margin-bottom: 12px;
+    }
+
+    .generate-btn:hover {
+      background: #6259D6;
+    }
+
+    .generate-btn:disabled {
+      background: #26263A;
+      color: #8B8BA3;
+      cursor: not-allowed;
+    }
+
+    .output-box {
+      padding: 12px;
+      background: #141423;
+      border: 1px solid #26263A;
+      border-radius: 10px;
+      min-height: 100px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .output-box.empty {
+      color: #8B8BA3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .copy-btn {
+      width: 100%;
+      padding: 10px;
+      background: #19192B;
+      border: 1px solid #26263A;
+      border-radius: 8px;
+      color: #F4F4F7;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 150ms;
+    }
+
+    .copy-btn:hover {
+      border-color: #8B8BA3;
+    }
+
+    .footer {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #26263A;
+      text-align: center;
+      font-size: 11px;
+      color: #8B8BA3;
+    }
+
+    .error {
+      padding: 8px 12px;
+      background: rgba(229, 72, 77, 0.1);
+      border: 1px solid #E5484D;
+      border-radius: 8px;
+      color: #F4F4F7;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    .loading {
+      text-align: center;
+      color: #8B8BA3;
+      font-size: 13px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z"/>
+      <path d="M12 12l9-4.5M12 12v9M12 12L3 7.5"/>
+    </svg>
+    <h1>ReplyAI</h1>
+  </div>
+
+  <div class="status" id="status">
+    <div class="status-dot inactive" id="statusDot"></div>
+    <span id="statusText">Open a chat app first</span>
+  </div>
+
+  <div class="mode-grid" id="modeGrid">
+    <button class="mode-btn selected" data-mode="flirty">💋 Flirty</button>
+    <button class="mode-btn" data-mode="funny">😂 Funny</button>
+    <button class="mode-btn" data-mode="professional">💼 Professional</button>
+    <button class="mode-btn" data-mode="roast">🔥 Roast</button>
+    <button class="mode-btn" data-mode="savage">⚡ Savage</button>
+    <button class="mode-btn" data-mode="custom">✏️ Custom</button>
+  </div>
+
+  <input 
+    type="text" 
+    class="custom-input hidden" 
+    id="customInput" 
+    placeholder="Describe your tone..."
+    maxlength="200"
+  />
+
+  <div class="error hidden" id="error"></div>
+
+  <button class="generate-btn" id="generateBtn" disabled>Generate Reply</button>
+
+  <div class="output-box empty" id="output">
+    Open a supported chat app to get started
+  </div>
+
+  <button class="copy-btn hidden" id="copyBtn">Copy Reply</button>
+
+  <div class="footer">
+    Powered by Groq
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

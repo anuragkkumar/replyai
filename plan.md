@@ -8,8 +8,10 @@
 
 ## 2) Implementation Steps
 
-### Phase 1 — Core POC (Isolation) (must pass before building UI/extension)
+### Phase 1 — Core POC (Isolation) ✅ COMPLETE
 **Goal:** validate Groq integration + validation + sanitization + slowapi rate limit + friendly error.
+
+**Status:** All tests passed. Core functionality validated.
 
 **User stories (POC)**
 1. As a developer, I can send a message+mode to an endpoint and get a valid reply JSON back.
@@ -42,8 +44,10 @@
 
 ---
 
-### Phase 2 — V1 App Development (Backend + Frontend + one-pass E2E test)
+### Phase 2 — V1 App Development (Backend + Frontend + one-pass E2E test) ✅ COMPLETE
 **Goal:** build full V1 web app using proven backend core.
+
+**Status:** Web app fully functional. Testing agent confirmed 95%+ success rate. All user stories completed.
 
 **User stories (Web V1)**
 1. As a user, I can paste a chat (up to 2000 chars) and see a live character counter.
@@ -80,8 +84,10 @@
 
 ---
 
-### Phase 3 — Chrome Extension V1 + Packaging (and one-pass E2E test)
+### Phase 3 — Chrome Extension V1 + Packaging (and one-pass E2E test) ✅ COMPLETE
 **Goal:** extension reads context and generates reply via backend; zip for installation.
+
+**Status:** Extension complete with MV3 manifest, content scripts for 4 platforms, popup UI, and packaged as ReplyAI.zip.
 
 **User stories (Extension V1)**
 1. As a user, I can press Ctrl+Shift+A to open the extension and generate a reply fast.

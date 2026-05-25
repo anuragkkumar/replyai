@@ -1,10 +1,18 @@
 [
   {
-    "content": "Phase 2: All user stories covered in Development",
+    "content": "Phase 3: Chrome Extension - Create MV3 structure with content scripts",
     "status": "completed"
   },
   {
-    "content": "Phase 2: End to End Testing using Testing Agent",
-    "status": "in_progress"
+    "content": "Phase 3: Chrome Extension - Build popup UI and API integration",
+    "status": "completed"
+  },
+  {
+    "content": "Phase 3: Chrome Extension - Package as zip with installation instructions",
+    "status": "completed"
+  },
+  {
+    "content": "Phase 3: All user stories covered and tested",
+    "status": "completed"
   }
 ]

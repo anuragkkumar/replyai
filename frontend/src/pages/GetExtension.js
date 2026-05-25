@@ -6,7 +6,12 @@ import { toast } from 'sonner';
 
 const GetExtension = () => {
   const handleDownload = () => {
-    toast.info('Extension download will be available after Phase 3');
+    // Download the extension zip file
+    const link = document.createElement('a');
+    link.href = '/ReplyAI.zip';
+    link.download = 'ReplyAI.zip';
+    link.click();
+    toast.success('Downloading ReplyAI extension...');
   };
 
   return (
@@ -41,7 +46,7 @@ const GetExtension = () => {
               Download Extension
             </Button>
             <p className="text-xs text-[var(--text-3)] mt-3">
-              The extension will be available after Phase 3 development is complete.
+              Works with Chrome and Edge browsers. Read the included README for installation instructions.
             </p>
           </div>
         </div>
