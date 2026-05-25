@@ -58,34 +58,38 @@ const GetExtension = () => {
         <div className="space-y-4">
           {[
             {
+              id: 'install-download',
               icon: Download,
               step: '1',
               title: 'Download the extension',
               description: 'Click the download button above to get the ReplyAI.zip file.',
             },
             {
+              id: 'install-extensions',
               icon: Monitor,
               step: '2',
               title: 'Open Extensions page',
               description: 'In Chrome or Edge, navigate to chrome://extensions or edge://extensions',
             },
             {
+              id: 'install-developer',
               icon: Settings,
               step: '3',
               title: 'Enable Developer mode',
               description: 'Toggle the "Developer mode" switch in the top right corner.',
             },
             {
+              id: 'install-load',
               icon: Puzzle,
               step: '4',
               title: 'Load the extension',
               description: 'Click "Load unpacked" and select the extracted ReplyAI folder.',
             },
-          ].map((item, index) => {
+          ].map((item) => {
             const Icon = item.icon;
             return (
               <Card
-                key={index}
+                key={item.id}
                 className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-lg)] p-4 sm:p-6 shadow-[var(--shadow-1)]"
               >
                 <div className="flex items-start gap-4">

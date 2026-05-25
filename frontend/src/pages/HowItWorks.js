@@ -4,16 +4,19 @@ import { Clipboard, Sparkles, Copy } from 'lucide-react';
 
 const steps = [
   {
+    id: 'step-paste',
     icon: Clipboard,
     title: 'Paste your chat',
     description: 'Drop the conversation you want to reply to.',
   },
   {
+    id: 'step-pick',
     icon: Sparkles,
     title: 'Pick your mode',
     description: 'Flirty, funny, professional—or define your own tone.',
   },
   {
+    id: 'step-copy',
     icon: Copy,
     title: 'Copy your reply',
     description: 'One click to copy. Regenerate if you want options.',
@@ -39,7 +42,7 @@ const HowItWorks = () => {
           const Icon = step.icon;
           return (
             <Card 
-              key={index}
+              key={step.id}
               className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-lg)] p-6 shadow-[var(--shadow-2)]"
             >
               <div className="flex flex-col items-start">

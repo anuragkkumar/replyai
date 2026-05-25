@@ -1,24 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '../components/ui/button';
-import { Textarea } from '../components/ui/textarea';
 import { Input } from '../components/ui/input';
 import { Card } from '../components/ui/card';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Progress } from '../components/ui/progress';
-import { Skeleton } from '../components/ui/skeleton';
 import { toast } from 'sonner';
-import { Copy, RefreshCw, Heart, Laugh, Briefcase, Flame, Zap, Edit3, AlertCircle } from 'lucide-react';
-
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://localhost:8001';
-
-const modes = [
-  { id: 'flirty', label: 'Flirty', icon: Heart },
-  { id: 'funny', label: 'Funny', icon: Laugh },
-  { id: 'professional', label: 'Professional', icon: Briefcase },
-  { id: 'roast', label: 'Roast', icon: Flame },
-  { id: 'savage', label: 'Savage', icon: Zap },
-  { id: 'custom', label: 'Custom', icon: Edit3 },
-];
+import { RefreshCw, AlertCircle } from 'lucide-react';
+import ConversationInput from '../components/ConversationInput';
+import ModeSelector from '../components/ModeSelector';
+import ReplyOutput from '../components/ReplyOutput';
+import { validateInput, handleApiError } from '../utils/homepageHelpers';
+import { 
+  CHAR_LIMIT, 
+  NEAR_LIMIT_THRESHOLD, 
+  COPIED_FEEDBACK_DURATION_MS, 
+  MAX_REQUEST_COUNT,
+  BACKEND_URL 
+} from '../constants/homepage';
 
 const HomePage = () => {
   const [conversation, setConversation] = useState('');
@@ -31,18 +29,11 @@ const HomePage = () => {
   const [copied, setCopied] = useState(false);
 
   const charCount = conversation.length;
-  const charLimit = 2000;
-  const isNearLimit = charCount > 1800;
-  const isAtLimit = charCount >= charLimit;
+  const isNearLimit = charCount > NEAR_LIMIT_THRESHOLD;
+  const isAtLimit = charCount >= CHAR_LIMIT;
 
   const generateReply = async () => {
-    if (!conversation.trim()) {
-      setError('Please paste a conversation first');
-      return;
-    }
-
-    if (selectedMode === 'custom' && !customTone.trim()) {
-      setError('Please describe your custom tone');
+    if (!validateInput(conversation, selectedMode, customTone, setError)) {
       return;
     }
 
@@ -65,17 +56,12 @@ const HomePage = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        if (response.status === 429) {
-          setError('Too many requests, please wait a moment.');
-          toast.error('Rate limit reached. Please wait a moment.');
-        } else {
-          setError(data.detail || 'Failed to generate reply');
-        }
+        handleApiError(response, data, setError, toast);
         return;
       }
 
       setReply(data.reply);
-      setRequestCount(prev => Math.min(prev + 1, 10));
+      setRequestCount(prev => Math.min(prev + 1, MAX_REQUEST_COUNT));
       toast.success('Reply generated successfully!');
     } catch (err) {
       setError('Failed to connect to server. Please try again.');
@@ -89,7 +75,7 @@ const HomePage = () => {
     navigator.clipboard.writeText(reply);
     setCopied(true);
     toast.success('Copied to clipboard!');
-    setTimeout(() => setCopied(false), 1200);
+    setTimeout(() => setCopied(false), COPIED_FEEDBACK_DURATION_MS);
   };
 
   const regenerate = () => {
@@ -112,63 +98,18 @@ const HomePage = () => {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Left Column - Input */}
         <div className="space-y-6">
-          {/* Conversation Input */}
-          <Card className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-lg)] p-4 sm:p-6 shadow-[var(--shadow-2)]">
-            <div className="flex items-center justify-between mb-3">
-              <label className="text-sm font-medium" htmlFor="conversation">
-                Paste your conversation
-              </label>
-              <span 
-                className={`text-xs font-mono ${
-                  isAtLimit ? 'text-[var(--danger)]' : 
-                  isNearLimit ? 'text-[var(--warning)]' : 
-                  'text-[var(--text-3)]'
-                }`}
-                data-testid="conversation-char-counter"
-              >
-                {charCount}/{charLimit}
-              </span>
-            </div>
-            <Textarea
-              id="conversation"
-              data-testid="conversation-textarea"
-              placeholder="Paste the conversation you want to reply to..."
-              value={conversation}
-              onChange={(e) => setConversation(e.target.value)}
-              rows={8}
-              maxLength={charLimit}
-              className="bg-[var(--bg-2)] border-[var(--border)] text-[var(--text)] placeholder:text-[var(--text-3)] resize-none"
-            />
-          </Card>
+          <ConversationInput 
+            conversation={conversation}
+            setConversation={setConversation}
+            charCount={charCount}
+            isNearLimit={isNearLimit}
+            isAtLimit={isAtLimit}
+          />
 
-          {/* Mode Selector */}
-          <div>
-            <p className="text-sm text-[var(--text-2)] mb-3">
-              Pick a tone. Custom lets you describe your vibe.
-            </p>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-              {modes.map((mode) => {
-                const Icon = mode.icon;
-                const isSelected = selectedMode === mode.id;
-                return (
-                  <Button
-                    key={mode.id}
-                    data-testid={`mode-${mode.id}-button`}
-                    onClick={() => setSelectedMode(mode.id)}
-                    className={`h-12 ${
-                      isSelected
-                        ? 'bg-[var(--primary)] text-[var(--primary-contrast)] border-[var(--primary)] hover:bg-[var(--primary-hover)]'
-                        : 'bg-[var(--surface)] text-[var(--text)] border border-[var(--border)] hover:border-[var(--text-3)]'
-                    } transition-colors duration-150`}
-                    variant="secondary"
-                  >
-                    <Icon className="h-4 w-4 mr-2" />
-                    {mode.label}
-                  </Button>
-                );
-              })}
-            </div>
-          </div>
+          <ModeSelector 
+            selectedMode={selectedMode}
+            setSelectedMode={setSelectedMode}
+          />
 
           {/* Custom Tone Input */}
           {selectedMode === 'custom' && (
@@ -217,10 +158,10 @@ const HomePage = () => {
             {/* Rate Limit Indicator */}
             <div className="mt-3 flex items-center justify-between gap-3">
               <span className="text-xs text-[var(--text-3)]" data-testid="rate-limit-remaining">
-                Requests used: {requestCount}/10 per minute
+                Requests used: {requestCount}/{MAX_REQUEST_COUNT} per minute
               </span>
               <Progress 
-                value={(requestCount / 10) * 100} 
+                value={(requestCount / MAX_REQUEST_COUNT) * 100} 
                 className="h-1.5 flex-1 bg-[var(--surface)]" 
               />
             </div>
@@ -229,58 +170,13 @@ const HomePage = () => {
 
         {/* Right Column - Output */}
         <div className="lg:sticky lg:top-20 lg:self-start">
-          <Card className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-lg)] p-4 sm:p-6 shadow-[var(--shadow-2)] min-h-[400px]">
-            {!reply && !loading && (
-              <div className="flex items-center justify-center h-full border-2 border-dashed border-[var(--border)] rounded-[var(--radius-md)] p-8">
-                <p className="text-[var(--text-2)] text-center">
-                  Paste a chat to get started.
-                </p>
-              </div>
-            )}
-
-            {loading && (
-              <div className="space-y-3">
-                <Skeleton className="h-4 w-full bg-[var(--surface-2)]" />
-                <Skeleton className="h-4 w-5/6 bg-[var(--surface-2)]" />
-                <Skeleton className="h-4 w-4/6 bg-[var(--surface-2)]" />
-              </div>
-            )}
-
-            {reply && !loading && (
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm font-medium">Your Reply</span>
-                  <div className="flex gap-2">
-                    <Button
-                      data-testid="copy-reply-button"
-                      onClick={copyToClipboard}
-                      size="sm"
-                      className="bg-[var(--primary)] text-[var(--primary-contrast)] hover:bg-[var(--primary-hover)] h-9 rounded-[10px]"
-                    >
-                      <Copy className="h-4 w-4 mr-2" />
-                      {copied ? 'Copied' : 'Copy'}
-                    </Button>
-                    <Button
-                      data-testid="regenerate-reply-button"
-                      onClick={regenerate}
-                      size="sm"
-                      variant="secondary"
-                      className="bg-[var(--surface-2)] border border-[var(--border)] hover:border-[var(--text-3)] h-9 rounded-[10px]"
-                    >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Regenerate
-                    </Button>
-                  </div>
-                </div>
-                <p 
-                  className="text-[var(--text)] leading-[1.5] text-sm md:text-base"
-                  data-testid="reply-output"
-                >
-                  {reply}
-                </p>
-              </div>
-            )}
-          </Card>
+          <ReplyOutput 
+            reply={reply}
+            loading={loading}
+            copied={copied}
+            copyToClipboard={copyToClipboard}
+            regenerate={regenerate}
+          />
         </div>
       </div>
 
