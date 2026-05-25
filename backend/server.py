@@ -12,6 +12,7 @@ import os
 from dotenv import load_dotenv
 import re
 from datetime import datetime
+from typing import Callable
 
 # Load environment variables
 load_dotenv()
@@ -34,7 +35,7 @@ app.add_middleware(
 
 # Security headers middleware
 @app.middleware("http")
-async def add_security_headers(request: Request, call_next) -> Response:
+async def add_security_headers(request: Request, call_next: Callable) -> Response:
     response = await call_next(request)
     response.headers["X-Content-Type-Options"] = "nosniff"
     response.headers["X-Frame-Options"] = "DENY"
