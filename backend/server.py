@@ -222,10 +222,18 @@ class GenerateRequest(BaseModel):
 
 # Response model
 class GenerateResponse(BaseModel):
-    reply: str
+    replies: List[str]  # Changed from single reply to list of 3
     mode: str
     style: str
     timestamp: str
+
+class TranslateRequest(BaseModel):
+    text: str = Field(..., min_length=1, max_length=1000)
+    target_language: str = Field(..., pattern=\"^(hindi|hinglish|spanish|french|arabic)$\")
+
+class TranslateResponse(BaseModel):
+    translated_text: str
+    target_language: str
 
 class ExtractTextResponse(BaseModel):
     text: str
@@ -437,15 +445,16 @@ async def generate_reply(request: Request, data: GenerateRequest) -> GenerateRes
         # Add current message
         messages.append({"role": "user", "content": f"Generate a reply to this conversation:\n\n{sanitized_messages}"})
         
-        # Call Groq API
-        response = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=messages,
-            temperature=0.7,
-            max_tokens=150,
-        )
-        
-        reply_text = response.choices[0].message.content
+        # Call Groq API - Generate 3 different replies
+        replies = []
+        for i in range(3):
+            response = groq_client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=messages,
+                temperature=0.7 + (i * 0.1),  # Slightly different temperature for variety
+                max_tokens=150,
+            )
+            replies.append(response.choices[0].message.content)
         
         # Record successful request
         record_ip_request(client_ip)
@@ -453,7 +462,7 @@ async def generate_reply(request: Request, data: GenerateRequest) -> GenerateRes
             record_fingerprint_request(data.fingerprint)
         
         return GenerateResponse(
-            reply=reply_text,
+            replies=replies,
             mode=data.mode.value,
             style=data.style.value,
             timestamp=datetime.utcnow().isoformat()
@@ -472,6 +481,49 @@ async def generate_reply(request: Request, data: GenerateRequest) -> GenerateRes
             status_code=500,
             detail="Failed to generate reply. Please try again."
         )
+
+@app.post("/api/translate", response_model=TranslateResponse)
+@limiter.limit("10/minute")
+async def translate_text(request: Request, data: TranslateRequest) -> TranslateResponse:
+    """Translate text to target language using Groq"""
+    
+    language_map = {
+        "hindi": "Hindi",
+        "hinglish": "Hinglish (Hindi written in English script)",
+        "spanish": "Spanish",
+        "french": "French",
+        "arabic": "Arabic"
+    }
+    
+    try:
+        target_lang = language_map[data.target_language]
+        
+        response = groq_client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "system",
+                    "content": f"You are a professional translator. Translate the following text to {target_lang}. Only return the translation, nothing else."
+                },
+                {
+                    "role": "user",
+                    "content": data.text
+                }
+            ],
+            temperature=0.3,
+            max_tokens=200,
+        )
+        
+        translated = response.choices[0].message.content
+        
+        return TranslateResponse(
+            translated_text=translated,
+            target_language=data.target_language
+        )
+        
+    except Exception as e:
+        print(f"Translation error: {e}")
+        raise HTTPException(status_code=500, detail="Translation failed")
 
 # Custom rate limit error handler
 @app.exception_handler(RateLimitExceeded)

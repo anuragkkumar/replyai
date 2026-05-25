@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 :root {
-  /* Colors */
+  /* Dark Mode Colors (default) */
   --bg: #0B0B10;
   --bg-2: #0F0F16;
   --surface: #141423;
@@ -49,6 +49,23 @@
   --space-5: 24px;
   --space-6: 32px;
   --space-7: 48px;
+}
+
+/* Light Mode */
+[data-theme="light"] {
+  --bg: #FFFFFF;
+  --bg-2: #F5F5F7;
+  --surface: #FAFAFA;
+  --surface-2: #F0F0F2;
+  --border: #E0E0E5;
+  --text: #1A1A1F;
+  --text-2: #4A4A58;
+  --text-3: #6A6A78;
+  --primary: #534AB7;
+  --primary-hover: #6259D6;
+  --primary-pressed: #463FA0;
+  --primary-contrast: #FFFFFF;
+  --shadow-2: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 * {
