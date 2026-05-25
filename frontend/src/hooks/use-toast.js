@@ -143,7 +143,7 @@ function useToast() {
         listeners.splice(index, 1)
       }
     };
-  }, [setState])
+  }, [setState])  // setState is stable from useState, listeners and index are closure variables
 
   return {
     ...state,

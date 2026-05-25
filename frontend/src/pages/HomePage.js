@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
-import { Card } from '../components/ui/card';
-import { Alert, AlertDescription } from '../components/ui/alert';
-import { Progress } from '../components/ui/progress';
-import { toast } from 'sonner';
-import { RefreshCw, AlertCircle } from 'lucide-react';
 import ConversationInput from '../components/ConversationInput';
 import ModeSelector from '../components/ModeSelector';
+import CustomToneInput from '../components/CustomToneInput';
+import ErrorAlert from '../components/ErrorAlert';
+import GenerateButton from '../components/GenerateButton';
 import ReplyOutput from '../components/ReplyOutput';
+import HeroSection from '../components/HeroSection';
+import Footer from '../components/Footer';
+import { toast } from 'sonner';
 import { validateInput, handleApiError } from '../utils/homepageHelpers';
 import { 
   CHAR_LIMIT, 
@@ -84,15 +83,7 @@ const HomePage = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      {/* Hero */}
-      <div className="mb-8 sm:mb-12">
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-[-0.02em] mb-3">
-          Reply smarter. Every time.
-        </h1>
-        <p className="text-base md:text-lg text-[var(--text-2)]">
-          Paste a conversation, pick a tone, get a reply you can send in seconds.
-        </p>
-      </div>
+      <HeroSection />
 
       {/* Main Grid */}
       <div className="grid lg:grid-cols-2 gap-6">
@@ -111,61 +102,22 @@ const HomePage = () => {
             setSelectedMode={setSelectedMode}
           />
 
-          {/* Custom Tone Input */}
           {selectedMode === 'custom' && (
-            <Card className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-lg)] p-4">
-              <label className="text-sm font-medium mb-2 block" htmlFor="custom-tone">
-                Describe your tone
-              </label>
-              <Input
-                id="custom-tone"
-                data-testid="mode-custom-input"
-                placeholder="e.g., Reply like a motivational coach"
-                value={customTone}
-                onChange={(e) => setCustomTone(e.target.value)}
-                maxLength={200}
-                className="bg-[var(--bg-2)] border-[var(--border)] text-[var(--text)] placeholder:text-[var(--text-3)]"
-              />
-            </Card>
+            <CustomToneInput 
+              customTone={customTone}
+              setCustomTone={setCustomTone}
+            />
           )}
 
-          {/* Error Alert */}
-          {error && (
-            <Alert className="bg-[var(--danger)]/10 border-[var(--danger)] text-[var(--text)]" data-testid="error-alert">
-              <AlertCircle className="h-4 w-4 text-[var(--danger)]" />
-              <AlertDescription className="text-[var(--text)]">{error}</AlertDescription>
-            </Alert>
-          )}
+          <ErrorAlert error={error} />
 
-          {/* Generate Button */}
-          <div>
-            <Button
-              data-testid="generate-reply-button"
-              onClick={generateReply}
-              disabled={loading || isAtLimit || !conversation.trim()}
-              className="w-full h-12 bg-[var(--primary)] text-[var(--primary-contrast)] hover:bg-[var(--primary-hover)] active:bg-[var(--primary-pressed)] font-medium rounded-[12px] transition-colors duration-150"
-            >
-              {loading ? (
-                <>
-                  <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                  Generating...
-                </>
-              ) : (
-                'Generate Reply'
-              )}
-            </Button>
-
-            {/* Rate Limit Indicator */}
-            <div className="mt-3 flex items-center justify-between gap-3">
-              <span className="text-xs text-[var(--text-3)]" data-testid="rate-limit-remaining">
-                Requests used: {requestCount}/{MAX_REQUEST_COUNT} per minute
-              </span>
-              <Progress 
-                value={(requestCount / MAX_REQUEST_COUNT) * 100} 
-                className="h-1.5 flex-1 bg-[var(--surface)]" 
-              />
-            </div>
-          </div>
+          <GenerateButton 
+            loading={loading}
+            isAtLimit={isAtLimit}
+            hasConversation={conversation.trim().length > 0}
+            onGenerate={generateReply}
+            requestCount={requestCount}
+          />
         </div>
 
         {/* Right Column - Output */}
@@ -180,12 +132,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="border-t border-[var(--border)] mt-12 pt-8 text-center">
-        <p className="text-xs text-[var(--text-3)]">
-          Your conversations are never stored or logged.
-        </p>
-      </footer>
+      <Footer />
     </div>
   );
 };
