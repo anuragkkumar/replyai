@@ -1,18 +1,22 @@
 [
   {
-    "content": "Phase 3: Chrome Extension - Create MV3 structure with content scripts",
+    "content": "Remove 'Try it now' heading from HomePage",
     "status": "completed"
   },
   {
-    "content": "Phase 3: Chrome Extension - Build popup UI and API integration",
+    "content": "Remove 'Made with Emergent' watermark",
     "status": "completed"
   },
   {
-    "content": "Phase 3: Chrome Extension - Package as zip with installation instructions",
+    "content": "Add animated contact form with name/email/message fields and send button",
     "status": "completed"
   },
   {
-    "content": "Phase 3: All user stories covered and tested",
+    "content": "Update footer with 'Developed by Anurag Kumar' linking to LinkedIn",
+    "status": "completed"
+  },
+  {
+    "content": "Test changes with screenshot",
     "status": "completed"
   }
 ]

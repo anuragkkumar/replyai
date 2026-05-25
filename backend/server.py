@@ -229,7 +229,7 @@ class GenerateResponse(BaseModel):
 
 class TranslateRequest(BaseModel):
     text: str = Field(..., min_length=1, max_length=1000)
-    target_language: str = Field(..., pattern=\"^(hindi|hinglish|spanish|french|arabic)$\")
+    target_language: str = Field(..., pattern="^(hindi|hinglish|spanish|french|arabic)$")
 
 class TranslateResponse(BaseModel):
     translated_text: str

@@ -11,6 +11,7 @@ import ConversationMemory from '../components/ConversationMemory';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
 import Testimonials from '../components/Testimonials';
+import ContactSection from '../components/ContactSection';
 import { toast } from 'sonner';
 import { validateInput, handleApiError, generateFingerprint } from '../utils/homepageHelpers';
 import { 
@@ -226,10 +227,6 @@ const HomePage = () => {
 
       {/* Generator Section */}
       <div ref={generatorRef} className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 border-t border-[var(--border)] mt-12">
-        <div className="mb-8 text-center">
-          <h2 className="text-3xl font-bold mb-2">Try it now</h2>
-          <p className="text-[var(--text-2)]">Generate perfect replies in seconds</p>
-        </div>
 
         {/* Honeypot field */}
         <input
@@ -304,6 +301,11 @@ const HomePage = () => {
             />
           </div>
         </div>
+      </div>
+
+      {/* Contact Section */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <ContactSection />
       </div>
 
       <Footer />
