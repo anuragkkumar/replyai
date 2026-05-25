@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ConversationInput from '../components/ConversationInput';
 import ModeSelector from '../components/ModeSelector';
 import CustomToneInput from '../components/CustomToneInput';
 import ErrorAlert from '../components/ErrorAlert';
 import GenerateButton from '../components/GenerateButton';
 import ReplyOutput from '../components/ReplyOutput';
-import HeroSection from '../components/HeroSection';
 import Footer from '../components/Footer';
 import StyleToggle from '../components/StyleToggle';
 import ConversationMemory from '../components/ConversationMemory';
+import Hero from '../components/Hero';
+import Features from '../components/Features';
+import Testimonials from '../components/Testimonials';
 import { toast } from 'sonner';
 import { validateInput, handleApiError, generateFingerprint } from '../utils/homepageHelpers';
 import { 
@@ -26,7 +28,7 @@ const HomePage = () => {
   const [selectedMode, setSelectedMode] = useState('flirty');
   const [selectedStyle, setSelectedStyle] = useState('ai');
   const [customTone, setCustomTone] = useState('');
-  const [reply, setReply] = useState('');
+  const [replies, setReplies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [requestCount, setRequestCount] = useState(0);
@@ -41,17 +43,23 @@ const HomePage = () => {
   
   // Anti-bot states
   const [fingerprint, setFingerprint] = useState('');
-  const [honeypot, setHoneypot] = useState(''); // Honeypot field
+  const [honeypot, setHoneypot] = useState('');
   const [lastRequestTime, setLastRequestTime] = useState(0);
+
+  // Ref for scrolling to generator
+  const generatorRef = useRef(null);
 
   const charCount = conversation.length;
   const isNearLimit = charCount > NEAR_LIMIT_THRESHOLD;
   const isAtLimit = charCount >= CHAR_LIMIT;
 
-  // Generate fingerprint on mount
   useEffect(() => {
     setFingerprint(generateFingerprint());
   }, []);
+
+  const scrollToGenerator = () => {
+    generatorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   const handleImageUpload = async (file) => {
     setUploadingFile(true);
@@ -124,7 +132,6 @@ const HomePage = () => {
   };
 
   const generateReply = async () => {
-    // Cooldown check (2 seconds between requests)
     const now = Date.now();
     if (now - lastRequestTime < REQUEST_COOLDOWN_MS) {
       setError('Please wait a moment between requests');
@@ -139,7 +146,6 @@ const HomePage = () => {
     setError('');
 
     try {
-      // Get reCAPTCHA token
       const recaptchaToken = await new Promise((resolve, reject) => {
         if (!window.grecaptcha) {
           reject(new Error('reCAPTCHA not loaded'));
@@ -166,7 +172,7 @@ const HomePage = () => {
           context: contextMemory || null,
           recaptcha_token: recaptchaToken,
           fingerprint: fingerprint,
-          honeypot: honeypot, // Should always be empty
+          honeypot: honeypot,
         }),
       });
 
@@ -177,10 +183,9 @@ const HomePage = () => {
         return;
       }
 
-      setReply(data.reply);
+      setReplies(data.replies || [data.reply]); // Handle both new (array) and old (single) format
       
-      // Add to conversation history
-      setConversationHistory(prev => [...prev, conversation, data.reply]);
+      setConversationHistory(prev => [...prev, conversation, data.replies?.[0] || data.reply]);
       
       setRequestCount(prev => Math.min(prev + 1, MAX_REQUEST_COUNT));
       setLastRequestTime(now);
@@ -194,8 +199,8 @@ const HomePage = () => {
     }
   };
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(reply);
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
     setCopied(true);
     toast.success('Copied to clipboard!');
     setTimeout(() => setCopied(false), COPIED_FEEDBACK_DURATION_MS);
@@ -211,82 +216,93 @@ const HomePage = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
-      <HeroSection />
+    <div>
+      {/* Landing Page Sections */}
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <Hero onTryNow={scrollToGenerator} />
+        <Features />
+        <Testimonials />
+      </div>
 
-      {/* Honeypot field - hidden from users, visible to bots */}
-      <input
-        type="text"
-        name="website"
-        value={honeypot}
-        onChange={(e) => setHoneypot(e.target.value)}
-        style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px' }}
-        tabIndex="-1"
-        autoComplete="off"
-        aria-hidden="true"
-      />
-
-      {/* Main Grid */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Left Column - Input */}
-        <div className="space-y-6">
-          <ConversationInput 
-            conversation={conversation}
-            setConversation={setConversation}
-            charCount={charCount}
-            isNearLimit={isNearLimit}
-            isAtLimit={isAtLimit}
-            onImageUpload={handleImageUpload}
-            onAudioUpload={handleAudioUpload}
-            uploadingFile={uploadingFile}
-          />
-          
-          {/* Conversation Memory */}
-          <ConversationMemory 
-            contextMemory={contextMemory}
-            setContextMemory={setContextMemory}
-            conversationHistory={conversationHistory}
-            onClearHistory={clearHistory}
-          />
-          
-          {/* Style Toggle */}
-          <StyleToggle 
-            selectedStyle={selectedStyle}
-            setSelectedStyle={setSelectedStyle}
-          />
-
-          <ModeSelector 
-            selectedMode={selectedMode}
-            setSelectedMode={setSelectedMode}
-          />
-
-          {selectedMode === 'custom' && (
-            <CustomToneInput 
-              customTone={customTone}
-              setCustomTone={setCustomTone}
-            />
-          )}
-
-          <ErrorAlert error={error} />
-
-          <GenerateButton 
-            loading={loading}
-            isAtLimit={isAtLimit}
-            hasConversation={conversation.trim().length > 0}
-            onGenerate={generateReply}
-            requestCount={requestCount}
-          />
+      {/* Generator Section */}
+      <div ref={generatorRef} className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 border-t border-[var(--border)] mt-12">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-bold mb-2">Try it now</h2>
+          <p className="text-[var(--text-2)]">Generate perfect replies in seconds</p>
         </div>
 
-        {/* Right Column - Output */}
-        <div className="lg:sticky lg:top-20 lg:self-start">
-          <ReplyOutput 
-            reply={reply}
-            loading={loading}
-            copied={copied}
-            copyToClipboard={copyToClipboard}
-            regenerate={regenerate}
-          />
+        {/* Honeypot field */}
+        <input
+          type="text"
+          name="website"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+          style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px' }}
+          tabIndex="-1"
+          autoComplete="off"
+          aria-hidden="true"
+        />
+
+        {/* Main Grid */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* Left Column - Input */}
+          <div className="space-y-6">
+            <ConversationInput 
+              conversation={conversation}
+              setConversation={setConversation}
+              charCount={charCount}
+              isNearLimit={isNearLimit}
+              isAtLimit={isAtLimit}
+              onImageUpload={handleImageUpload}
+              onAudioUpload={handleAudioUpload}
+              uploadingFile={uploadingFile}
+            />
+            
+            <ConversationMemory 
+              contextMemory={contextMemory}
+              setContextMemory={setContextMemory}
+              conversationHistory={conversationHistory}
+              onClearHistory={clearHistory}
+            />
+            
+            <StyleToggle 
+              selectedStyle={selectedStyle}
+              setSelectedStyle={setSelectedStyle}
+            />
+
+            <ModeSelector 
+              selectedMode={selectedMode}
+              setSelectedMode={setSelectedMode}
+            />
+
+            {selectedMode === 'custom' && (
+              <CustomToneInput 
+                customTone={customTone}
+                setCustomTone={setCustomTone}
+              />
+            )}
+
+            <ErrorAlert error={error} />
+
+            <GenerateButton 
+              loading={loading}
+              isAtLimit={isAtLimit}
+              hasConversation={conversation.trim().length > 0}
+              onGenerate={generateReply}
+              requestCount={requestCount}
+            />
+          </div>
+
+          {/* Right Column - Output */}
+          <div className="lg:sticky lg:top-20 lg:self-start">
+            <ReplyOutput 
+              reply={replies[0] || ''}
+              loading={loading}
+              copied={copied}
+              copyToClipboard={() => copyToClipboard(replies[0])}
+              regenerate={regenerate}
+            />
+          </div>
         </div>
       </div>
 
