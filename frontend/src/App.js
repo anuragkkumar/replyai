@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import Navbar from './components/Navbar';
+import GeneratorNavbar from './components/GeneratorNavbar';
 import LandingPage from './pages/LandingPage';
 import GeneratorPage from './pages/GeneratorPage';
 import HowItWorks from './pages/HowItWorks';
@@ -15,20 +16,20 @@ function App() {
     <Router>
       <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
         <Routes>
-          {/* Landing Page - No Navbar */}
+          {/* Landing Page - Use GeneratorNavbar */}
           <Route path="/" element={
             <>
-              <Navbar />
+              <GeneratorNavbar />
               <main>
                 <LandingPage />
               </main>
             </>
           } />
           
-          {/* Generator Page - No Navbar (has its own header) */}
+          {/* Generator Page - No Navbar (has its own integrated navbar) */}
           <Route path="/generator" element={<GeneratorPage />} />
           
-          {/* Other Pages with Navbar */}
+          {/* Other Pages with Old Navbar */}
           <Route path="/how-it-works" element={
             <>
               <Navbar />
