@@ -1,30 +1,34 @@
 [
   {
-    "content": "Fix 1: Update backend to add dramatic Human vs AI style prompts",
+    "content": "1. Check and move README.md to root if needed",
     "status": "completed"
   },
   {
-    "content": "Fix 2: Add hamburger menu to navbar for mobile",
+    "content": "2. Check backend files (main.py, requirements.txt, .env.example)",
     "status": "completed"
   },
   {
-    "content": "Fix 2: Make generator single column on mobile",
+    "content": "3. Check extension folder files",
     "status": "completed"
   },
   {
-    "content": "Fix 2: Make mode buttons wrap on mobile",
+    "content": "4. Check frontend/src folder structure",
     "status": "completed"
   },
   {
-    "content": "Fix 2: Stack reply box below input on mobile",
+    "content": "5. Create .gitignore at root",
     "status": "completed"
   },
   {
-    "content": "Fix 2: Adjust text sizes and button widths for mobile",
+    "content": "6. Create ARCHITECTURE.md",
     "status": "completed"
   },
   {
-    "content": "Test both fixes",
+    "content": "7. Check for hardcoded API keys",
+    "status": "completed"
+  },
+  {
+    "content": "8. Create PROJECT_SUMMARY.md",
     "status": "completed"
   }
 ]
