@@ -1,18 +1,26 @@
 [
   {
-    "content": "Find Testimonials component and add Try it Now button below it",
+    "content": "Create person icon SVG for profile button",
     "status": "completed"
   },
   {
-    "content": "Style button to match hero button with purple background",
+    "content": "Update GeneratorPage header with full navbar",
     "status": "completed"
   },
   {
-    "content": "Add navigation to /generator page",
+    "content": "Add middle navigation links (home, replyai, etc)",
     "status": "completed"
   },
   {
-    "content": "Test with screenshot",
+    "content": "Add circular profile button with dropdown",
+    "status": "completed"
+  },
+  {
+    "content": "Implement dropdown logic with outside click handler",
+    "status": "completed"
+  },
+  {
+    "content": "Test with screenshots",
     "status": "completed"
   }
 ]

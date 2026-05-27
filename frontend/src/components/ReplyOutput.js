@@ -8,9 +8,10 @@ const ReplyOutput = ({ reply, loading, copied, copyToClipboard, regenerate }) =>
   if (!reply && !loading) {
     return (
       <Card className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-lg)] p-4 sm:p-6 shadow-[var(--shadow-2)] min-h-[400px]">
-        <div className="flex items-center justify-center h-full border-2 border-dashed border-[var(--border)] rounded-[var(--radius-md)] p-8">
-          <p className="text-[var(--text-2)] text-center">
-            Paste a chat to get started.
+        <div className="flex flex-col items-center justify-center h-full min-h-[350px]">
+          <div className="text-6xl mb-4 opacity-30">🤖</div>
+          <p className="text-[var(--text-3)] text-center text-sm">
+            Your AI reply will appear here...
           </p>
         </div>
       </Card>
