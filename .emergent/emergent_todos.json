@@ -1,22 +1,30 @@
 [
   {
-    "content": "Remove 'Try it now' heading from HomePage",
+    "content": "Install react-router-dom",
     "status": "completed"
   },
   {
-    "content": "Remove 'Made with Emergent' watermark",
+    "content": "Create separate LandingPage component with hero, features, testimonials, contact, footer",
     "status": "completed"
   },
   {
-    "content": "Add animated contact form with name/email/message fields and send button",
+    "content": "Create separate GeneratorPage component with generator UI only",
     "status": "completed"
   },
   {
-    "content": "Update footer with 'Developed by Anurag Kumar' linking to LinkedIn",
+    "content": "Update App.js to use React Router with routes",
     "status": "completed"
   },
   {
-    "content": "Test changes with screenshot",
+    "content": "Add ReplyAI logo navigation in generator page",
+    "status": "completed"
+  },
+  {
+    "content": "Move request counter inside generator section",
+    "status": "completed"
+  },
+  {
+    "content": "Test navigation flow with screenshots",
     "status": "completed"
   }
 ]
