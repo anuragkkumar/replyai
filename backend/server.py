@@ -88,10 +88,8 @@ MODE_PROMPTS = {
 
 # Style modifiers
 STYLE_MODIFIERS = {
-    "ai": "Use perfect grammar, proper punctuation, and clear professional language.",
-    "human": """Write like a real person texting casually. Use 'u' instead of 'you', 'r' instead of 'are', 'gonna', 'wanna', 'tbh', 'ngl', 'lol', 'yaar', 'bro'. 
-Skip capitals sometimes. Use '...' frequently. Add occasional small typos (like 'teh' instead of 'the'). 
-Keep it short and punchy. Start with phrases like 'omg', 'okay so', 'ngl tho' sometimes. Make it feel authentic and casual."""
+    "ai": "Write with perfect grammar, proper punctuation, complete sentences and professional tone.",
+    "human": "You must write exactly like a real person casually texting their friend. Always use 'u' instead of 'you', 'r' instead of 'are', 'ur' instead of 'your', 'gonna', 'wanna', 'tbh', 'ngl', 'lol', 'omg', 'bro', 'yaar'. Never use capital letters to start sentences. Use '...' frequently. Keep replies very short, maximum 1-2 lines. Sound lazy and casual. Never sound formal or professional."
 }
 
 # Anti-bot functions

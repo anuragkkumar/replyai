@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Menu, X } from 'lucide-react';
 
 const GeneratorNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dropdownRef = useRef(null);
+  const mobileMenuRef = useRef(null);
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   
   // Handle outside click for dropdown
   useEffect(() => {
@@ -15,19 +17,24 @@ const GeneratorNavbar = () => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowProfileDropdown(false);
       }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+        const hamburgerButton = document.getElementById('hamburger-button');
+        if (hamburgerButton && !hamburgerButton.contains(event.target)) {
+          setShowMobileMenu(false);
+        }
+      }
     };
     
-    if (showProfileDropdown) {
+    if (showProfileDropdown || showMobileMenu) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [showProfileDropdown]);
+  }, [showProfileDropdown, showMobileMenu]);
   
-  const scrollToContact = (e) => {
-    e.preventDefault();
+  const scrollToContact = () => {
     if (location.pathname !== '/') {
       navigate('/');
       setTimeout(() => {
@@ -44,20 +51,29 @@ const GeneratorNavbar = () => {
     }
   };
   
+  const handleNavClick = (path) => {
+    if (path === 'contact') {
+      scrollToContact();
+    } else {
+      navigate(path);
+    }
+    setShowMobileMenu(false);
+  };
+  
   return (
     <header className="sticky top-0 z-50 bg-[var(--bg)] border-b border-[var(--border)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Left: Logo */}
         <button
           onClick={() => navigate('/')}
-          className="inline-flex items-center gap-2 text-[var(--text)] hover:text-[var(--primary)] transition-colors"
+          className="inline-flex items-center gap-2 text-[var(--text)] hover:text-[var(--primary)] transition-colors z-10"
           data-testid="logo-home-button"
         >
           <Sparkles className="h-6 w-6 text-[var(--primary)]" />
           <span className="text-xl font-bold">ReplyAI</span>
         </button>
         
-        {/* Middle: Navigation Links */}
+        {/* Middle: Navigation Links - Desktop */}
         <div className="hidden md:flex items-center gap-1">
           <Button
             variant="ghost"
@@ -124,8 +140,20 @@ const GeneratorNavbar = () => {
           </Button>
         </div>
         
-        {/* Right: Profile Button with Dropdown */}
-        <div className="relative" ref={dropdownRef}>
+        {/* Right: Mobile Menu Button + Profile Button */}
+        <div className="flex items-center gap-2">
+          {/* Hamburger Menu Button - Mobile Only */}
+          <button
+            id="hamburger-button"
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="md:hidden p-2 text-[var(--text)] hover:text-[var(--primary)] transition-colors"
+            data-testid="mobile-menu-button"
+          >
+            {showMobileMenu ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+          
+          {/* Profile Button */}
+          <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setShowProfileDropdown(!showProfileDropdown)}
             className="w-10 h-10 rounded-full bg-[#2a2a3a] flex items-center justify-center hover:bg-[#353549] transition-colors"
@@ -184,6 +212,61 @@ const GeneratorNavbar = () => {
           )}
         </div>
       </div>
+      </div>
+      
+      {/* Mobile Menu Dropdown */}
+      {showMobileMenu && (
+        <div
+          ref={mobileMenuRef}
+          className="md:hidden absolute top-16 left-0 right-0 bg-[var(--surface)] border-b border-[var(--border)] shadow-[var(--shadow-2)] z-40"
+          data-testid="mobile-menu"
+        >
+          <div className="px-4 py-2 space-y-1">
+            <button
+              onClick={() => handleNavClick('/')}
+              className={`w-full text-left px-4 py-3 rounded-lg ${location.pathname === '/' ? 'bg-[var(--primary)]/10 text-[var(--text)]' : 'text-[var(--text-2)] hover:bg-[var(--surface-2)]'}`}
+            >
+              Home
+            </button>
+            <button
+              onClick={() => handleNavClick('/generator')}
+              className={`w-full text-left px-4 py-3 rounded-lg ${location.pathname === '/generator' ? 'bg-[var(--primary)]/10 text-[var(--text)]' : 'text-[var(--text-2)] hover:bg-[var(--surface-2)]'}`}
+            >
+              ReplyAI
+            </button>
+            <button
+              onClick={() => handleNavClick('/how-it-works')}
+              className={`w-full text-left px-4 py-3 rounded-lg ${location.pathname === '/how-it-works' ? 'bg-[var(--primary)]/10 text-[var(--text)]' : 'text-[var(--text-2)] hover:bg-[var(--surface-2)]'}`}
+            >
+              How it works
+            </button>
+            <button
+              onClick={() => handleNavClick('/get-extension')}
+              className={`w-full text-left px-4 py-3 rounded-lg ${location.pathname === '/get-extension' ? 'bg-[var(--primary)]/10 text-[var(--text)]' : 'text-[var(--text-2)] hover:bg-[var(--surface-2)]'}`}
+            >
+              Get Extension
+            </button>
+            <button
+              onClick={() => handleNavClick('/blog')}
+              className={`w-full text-left px-4 py-3 rounded-lg ${location.pathname === '/blog' ? 'bg-[var(--primary)]/10 text-[var(--text)]' : 'text-[var(--text-2)] hover:bg-[var(--surface-2)]'}`}
+            >
+              Blog
+            </button>
+            <button
+              onClick={() => handleNavClick('/career')}
+              className={`w-full text-left px-4 py-3 rounded-lg ${location.pathname === '/career' ? 'bg-[var(--primary)]/10 text-[var(--text)]' : 'text-[var(--text-2)] hover:bg-[var(--surface-2)]'}`}
+            >
+              Career
+            </button>
+            <button
+              onClick={() => handleNavClick('contact')}
+              className="w-full text-left px-4 py-3 rounded-lg text-[var(--text-2)] hover:bg-[var(--surface-2)]"
+            >
+              Contact
+            </button>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

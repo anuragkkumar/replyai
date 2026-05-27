@@ -1,14 +1,30 @@
 [
   {
-    "content": "Update App.js to use GeneratorNavbar for ALL pages",
+    "content": "Fix 1: Update backend to add dramatic Human vs AI style prompts",
     "status": "completed"
   },
   {
-    "content": "Remove old Navbar usage from all routes",
+    "content": "Fix 2: Add hamburger menu to navbar for mobile",
     "status": "completed"
   },
   {
-    "content": "Test all pages to verify consistent navbar",
+    "content": "Fix 2: Make generator single column on mobile",
+    "status": "completed"
+  },
+  {
+    "content": "Fix 2: Make mode buttons wrap on mobile",
+    "status": "completed"
+  },
+  {
+    "content": "Fix 2: Stack reply box below input on mobile",
+    "status": "completed"
+  },
+  {
+    "content": "Fix 2: Adjust text sizes and button widths for mobile",
+    "status": "completed"
+  },
+  {
+    "content": "Test both fixes",
     "status": "completed"
   }
 ]

@@ -228,8 +228,8 @@ const GeneratorPage = () => {
           aria-hidden="true"
         />
 
-        {/* Main Grid */}
-        <div className="grid lg:grid-cols-2 gap-6">
+        {/* Main Grid - Single column on mobile, 2 columns on large screens */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left Column - Input */}
           <div className="space-y-6">
             <ConversationInput 
