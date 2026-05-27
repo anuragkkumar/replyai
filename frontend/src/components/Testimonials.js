@@ -1,5 +1,8 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from './ui/card';
+import { Button } from './ui/button';
+import { ArrowRight } from 'lucide-react';
 
 const testimonials = [
   {
@@ -23,6 +26,8 @@ const testimonials = [
 ];
 
 const Testimonials = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="py-16">
       <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
@@ -41,6 +46,18 @@ const Testimonials = () => {
             <p className="text-sm text-[var(--text-2)]">{testimonial.text}</p>
           </Card>
         ))}
+      </div>
+      
+      {/* Try it Now Button */}
+      <div className="text-center mt-12">
+        <Button
+          onClick={() => navigate('/generator')}
+          className="h-14 px-8 bg-[var(--primary)] text-[var(--primary-contrast)] hover:bg-[var(--primary-hover)] text-lg font-semibold rounded-[12px]"
+          data-testid="try-now-button"
+        >
+          Try it Now
+          <ArrowRight className="ml-2 h-5 w-5" />
+        </Button>
       </div>
     </div>
   );
