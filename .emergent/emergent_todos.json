@@ -1,22 +1,14 @@
 [
   {
-    "content": "Create new GeneratorNavbar component with profile dropdown",
+    "content": "Update App.js to use GeneratorNavbar for ALL pages",
     "status": "completed"
   },
   {
-    "content": "Extract navbar logic from GeneratorPage to reusable component",
+    "content": "Remove old Navbar usage from all routes",
     "status": "completed"
   },
   {
-    "content": "Update App.js to use new navbar for landing page",
-    "status": "completed"
-  },
-  {
-    "content": "Update GeneratorPage to use shared navbar component",
-    "status": "completed"
-  },
-  {
-    "content": "Test both pages with screenshots",
+    "content": "Test all pages to verify consistent navbar",
     "status": "completed"
   }
 ]

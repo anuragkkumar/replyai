@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'sonner';
-import Navbar from './components/Navbar';
 import GeneratorNavbar from './components/GeneratorNavbar';
 import LandingPage from './pages/LandingPage';
 import GeneratorPage from './pages/GeneratorPage';
@@ -16,7 +15,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
         <Routes>
-          {/* Landing Page - Use GeneratorNavbar */}
+          {/* Landing Page */}
           <Route path="/" element={
             <>
               <GeneratorNavbar />
@@ -26,13 +25,13 @@ function App() {
             </>
           } />
           
-          {/* Generator Page - No Navbar (has its own integrated navbar) */}
+          {/* Generator Page */}
           <Route path="/generator" element={<GeneratorPage />} />
           
-          {/* Other Pages with Old Navbar */}
+          {/* All Other Pages with Shared Navbar */}
           <Route path="/how-it-works" element={
             <>
-              <Navbar />
+              <GeneratorNavbar />
               <main>
                 <HowItWorks />
               </main>
@@ -40,7 +39,7 @@ function App() {
           } />
           <Route path="/get-extension" element={
             <>
-              <Navbar />
+              <GeneratorNavbar />
               <main>
                 <GetExtension />
               </main>
@@ -48,7 +47,7 @@ function App() {
           } />
           <Route path="/blog" element={
             <>
-              <Navbar />
+              <GeneratorNavbar />
               <main>
                 <BlogPage />
               </main>
@@ -56,7 +55,7 @@ function App() {
           } />
           <Route path="/career" element={
             <>
-              <Navbar />
+              <GeneratorNavbar />
               <main>
                 <CareerPage />
               </main>
