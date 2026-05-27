@@ -1,23 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from './ui/button';
-import { Sparkles, Sun, Moon } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 const Navbar = () => {
   const location = useLocation();
-  const [theme, setTheme] = useState('dark');
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    setTheme(savedTheme);
-    document.documentElement.setAttribute('data-theme', savedTheme);
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    localStorage.setItem('theme', newTheme);
-    document.documentElement.setAttribute('data-theme', newTheme);
+  
+  const scrollToContact = (e) => {
+    e.preventDefault();
+    if (location.pathname !== '/') {
+      window.location.href = '/#contact';
+    } else {
+      const contactSection = document.getElementById('contact-section');
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   };
   
   return (
@@ -49,15 +47,34 @@ const Navbar = () => {
               Get Extension
             </Button>
           </Link>
+          <Link to="/blog">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              data-testid="navbar-blog-link"
+              className={location.pathname === '/blog' ? 'text-[var(--text)]' : 'text-[var(--text-2)]'}
+            >
+              Blog
+            </Button>
+          </Link>
+          <Link to="/career">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              data-testid="navbar-career-link"
+              className={location.pathname === '/career' ? 'text-[var(--text)]' : 'text-[var(--text-2)]'}
+            >
+              Career
+            </Button>
+          </Link>
           <Button
             variant="ghost"
             size="sm"
-            onClick={toggleTheme}
-            className="h-9 w-9 p-0"
-            data-testid="theme-toggle"
-            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            onClick={scrollToContact}
+            data-testid="navbar-contact-link"
+            className="text-[var(--text-2)]"
           >
-            {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            Contact
           </Button>
         </div>
       </div>

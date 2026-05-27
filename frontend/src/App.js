@@ -6,6 +6,8 @@ import LandingPage from './pages/LandingPage';
 import GeneratorPage from './pages/GeneratorPage';
 import HowItWorks from './pages/HowItWorks';
 import GetExtension from './pages/GetExtension';
+import BlogPage from './pages/BlogPage';
+import CareerPage from './pages/CareerPage';
 import './App.css';
 
 function App() {
@@ -40,6 +42,22 @@ function App() {
               <Navbar />
               <main>
                 <GetExtension />
+              </main>
+            </>
+          } />
+          <Route path="/blog" element={
+            <>
+              <Navbar />
+              <main>
+                <BlogPage />
+              </main>
+            </>
+          } />
+          <Route path="/career" element={
+            <>
+              <Navbar />
+              <main>
+                <CareerPage />
               </main>
             </>
           } />

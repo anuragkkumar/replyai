@@ -48,6 +48,7 @@ const ContactSection = () => {
 
   return (
     <div 
+      id="contact-section"
       ref={sectionRef}
       className={`py-20 transition-all duration-1000 ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
