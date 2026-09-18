@@ -1,5 +1,5 @@
 // Popup script for ReplyAI Chrome Extension
-const BACKEND_URL = 'http://localhost:8001';
+const BACKEND_URL = 'https://replyai-t7vr.onrender.com';
 
 let selectedMode = 'flirty';
 let generatedReply = null;
