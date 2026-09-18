@@ -56,6 +56,12 @@ async def add_security_headers(request: Request, call_next: Callable) -> Respons
     response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
     return response
 
+# Uptime and health check endpoints
+@app.get("/")
+@app.get("/health")
+async def health_check():
+    return {"status": "ok", "service": "ReplyAI Backend", "uptime": "active"}
+
 # Initialize Groq client
 groq_api_key = os.getenv("GROQ_API_KEY")
 if not groq_api_key:
