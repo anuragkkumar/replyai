@@ -30,20 +30,49 @@ const ContactSection = () => {
     return () => observer.disconnect();
   }, []);
 
+  const [errorMessage, setErrorMessage] = useState('');
+  const WEB3FORMS_KEY = process.env.REACT_APP_WEB3FORMS_KEY || '8f8de715-0f59-4d1a-a12a-6606d43d16b5';
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage('');
     setStatus('transmitting');
     
-    // Simulate multi-stage dispatch
-    await new Promise((resolve) => setTimeout(resolve, 1400));
-    
-    setStatus('sent');
-    setTimeout(() => {
-      setName('');
-      setEmail('');
-      setMessage('');
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          name: name.trim(),
+          email: email.trim(),
+          message: message.trim(),
+          from_name: 'ReplyAI Web Transmission',
+          subject: `[ReplyAI Contact] Message from ${name.trim() || 'Visitor'}`,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setStatus('sent');
+        setTimeout(() => {
+          setName('');
+          setEmail('');
+          setMessage('');
+          setStatus('idle');
+        }, 4000);
+      } else {
+        setStatus('idle');
+        setErrorMessage(result.message || 'Transmission failed. Please try again.');
+      }
+    } catch (err) {
+      console.error('Submission error:', err);
       setStatus('idle');
-    }, 3500);
+      setErrorMessage('Network error during dispatch. Please try again.');
+    }
   };
 
   return (
@@ -200,6 +229,13 @@ const ContactSection = () => {
                     />
                   </div>
                 </div>
+
+                {errorMessage && (
+                  <div className="p-3 bg-[#2A0E0E] border border-[#EF4444]/40 rounded-[4px] font-mono text-xs text-[#FCA5A5] flex items-center gap-2">
+                    <span className="text-[#EF4444] font-bold">⚠</span>
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
 
                 {/* Submit button with shimmer effect and state-driven micro-animation */}
                 <button
