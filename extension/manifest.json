@@ -4,6 +4,12 @@
   "version": "1.0",
   "description": "AI-powered reply assistant for any chat",
   "permissions": ["activeTab", "scripting"],
+  "host_permissions": [
+    "http://localhost:8001/*",
+    "http://127.0.0.1:8001/*",
+    "http://localhost:8000/*",
+    "http://127.0.0.1:8000/*"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {

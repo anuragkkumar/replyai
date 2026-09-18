@@ -77,7 +77,7 @@
    - Reply box with Copy + Regenerate
    - Friendly errors (including 429 message)
 3. Styling: minimal dark, flat components, purple accents (#534AB7).
-4. Wire API base URL via env (dev localhost, prod emergent).
+4. Wire API base URL via env (dev localhost, prod backend).
 
 **Testing (end of Phase 2)**
 - Run 1 round E2E: generate replies across modes, copy, regenerate, nav pages, error states.
@@ -103,7 +103,7 @@
    - popup UI (380px) with mode buttons + generate + copy
 2. API URL switching:
    - dev: `http://localhost:8000`
-   - prod: Emergent URL (build-time constant or simple heuristic)
+   - prod: Production URL (build-time constant or simple heuristic)
 3. Validate extension never contains Groq key; only calls backend.
 4. Package extension as zip with install instructions (Chrome + Edge).
 

@@ -33,7 +33,7 @@ const BlogPage = () => {
     <div className="min-h-screen flex flex-col">
       <div className="flex-1">
         {/* Hero Section */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-16 sm:py-20 text-center">
           <h1 className="text-5xl sm:text-6xl font-bold mb-4">
             Blog
           </h1>
@@ -43,7 +43,7 @@ const BlogPage = () => {
         </div>
 
         {/* Blog Posts Section */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 pb-20">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
               <Card 

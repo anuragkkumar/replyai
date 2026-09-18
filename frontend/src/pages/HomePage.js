@@ -1,13 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ConversationInput from '../components/ConversationInput';
-import ModeSelector from '../components/ModeSelector';
-import CustomToneInput from '../components/CustomToneInput';
-import ErrorAlert from '../components/ErrorAlert';
-import GenerateButton from '../components/GenerateButton';
-import ReplyOutput from '../components/ReplyOutput';
+import UnifiedWorkspace from '../components/UnifiedWorkspace';
 import Footer from '../components/Footer';
-import StyleToggle from '../components/StyleToggle';
-import ConversationMemory from '../components/ConversationMemory';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
 import Testimonials from '../components/Testimonials';
@@ -219,14 +212,27 @@ const HomePage = () => {
   return (
     <div>
       {/* Landing Page Sections */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         <Hero onTryNow={scrollToGenerator} />
         <Features />
         <Testimonials />
       </div>
 
       {/* Generator Section */}
-      <div ref={generatorRef} className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 border-t border-[var(--border)] mt-12">
+      <div ref={generatorRef} className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-8 sm:py-12 border-t border-[var(--border)] mt-12">
+        
+        {/* Section Title */}
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-[var(--border)]">
+          <div>
+            <div className="text-xs font-mono text-[var(--primary)] uppercase tracking-wider mb-1">[ GENERATOR_ENGINE ]</div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[var(--text)] tracking-tight">
+              Test your reply in real-time
+            </h2>
+          </div>
+          <span className="text-xs text-[var(--text-3)] font-mono">
+            Zero logs • Volatile RAM execution
+          </span>
+        </div>
 
         {/* Honeypot field */}
         <input
@@ -240,71 +246,39 @@ const HomePage = () => {
           aria-hidden="true"
         />
 
-        {/* Main Grid */}
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Left Column - Input */}
-          <div className="space-y-6">
-            <ConversationInput 
-              conversation={conversation}
-              setConversation={setConversation}
-              charCount={charCount}
-              isNearLimit={isNearLimit}
-              isAtLimit={isAtLimit}
-              onImageUpload={handleImageUpload}
-              onAudioUpload={handleAudioUpload}
-              uploadingFile={uploadingFile}
-            />
-            
-            <ConversationMemory 
-              contextMemory={contextMemory}
-              setContextMemory={setContextMemory}
-              conversationHistory={conversationHistory}
-              onClearHistory={clearHistory}
-            />
-            
-            <StyleToggle 
-              selectedStyle={selectedStyle}
-              setSelectedStyle={setSelectedStyle}
-            />
-
-            <ModeSelector 
-              selectedMode={selectedMode}
-              setSelectedMode={setSelectedMode}
-            />
-
-            {selectedMode === 'custom' && (
-              <CustomToneInput 
-                customTone={customTone}
-                setCustomTone={setCustomTone}
-              />
-            )}
-
-            <ErrorAlert error={error} />
-
-            <GenerateButton 
-              loading={loading}
-              isAtLimit={isAtLimit}
-              hasConversation={conversation.trim().length > 0}
-              onGenerate={generateReply}
-              requestCount={requestCount}
-            />
-          </div>
-
-          {/* Right Column - Output */}
-          <div className="lg:sticky lg:top-20 lg:self-start">
-            <ReplyOutput 
-              reply={replies[0] || ''}
-              loading={loading}
-              copied={copied}
-              copyToClipboard={() => copyToClipboard(replies[0])}
-              regenerate={regenerate}
-            />
-          </div>
-        </div>
+        {/* Unified Clean Workspace Card */}
+        <UnifiedWorkspace
+          conversation={conversation}
+          setConversation={setConversation}
+          charCount={charCount}
+          isNearLimit={isNearLimit}
+          isAtLimit={isAtLimit}
+          onImageUpload={handleImageUpload}
+          onAudioUpload={handleAudioUpload}
+          uploadingFile={uploadingFile}
+          selectedMode={selectedMode}
+          setSelectedMode={setSelectedMode}
+          selectedStyle={selectedStyle}
+          setSelectedStyle={setSelectedStyle}
+          customTone={customTone}
+          setCustomTone={setCustomTone}
+          error={error}
+          loading={loading}
+          onGenerate={generateReply}
+          reply={replies[0] || ''}
+          copied={copied}
+          copyToClipboard={() => copyToClipboard(replies[0])}
+          regenerate={regenerate}
+          contextMemory={contextMemory}
+          setContextMemory={setContextMemory}
+          conversationHistory={conversationHistory}
+          clearHistory={clearHistory}
+          requestCount={requestCount}
+        />
       </div>
 
       {/* Contact Section */}
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10">
         <ContactSection />
       </div>
 

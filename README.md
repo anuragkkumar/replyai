@@ -2,7 +2,6 @@
 
 > **AI-powered reply generation for any chat platform. 6 modes. Screenshot OCR. Voice transcription. Enterprise security. No login required.**
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-success?style=for-the-badge)](https://replyai-secure.preview.emergentagent.com)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
 [![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org/)
@@ -77,8 +76,8 @@
 
 ## 🎬 Demo
 
-### Live Application
-👉 **[Try ReplyAI Now](https://replyai-secure.preview.emergentagent.com)**
+### Web Application
+Run locally at `http://localhost:3000` after following the [Quick Start](#-quick-start).
 
 ### Reply Modes Examples
 
@@ -282,7 +281,7 @@ yarn start
 
 ### Web Application
 
-1. Visit [https://replyai-secure.preview.emergentagent.com](https://replyai-secure.preview.emergentagent.com)
+1. Open `http://localhost:3000` in your browser
 2. Click **"Try ReplyAI Free"** on the landing page
 3. **Enter conversation** or upload screenshot/audio
 4. **Select reply mode**: Flirty, Funny, Professional, Roast, Savage, or Custom
@@ -305,8 +304,8 @@ yarn start
 ### Base URL
 
 ```
-Production: https://replyai-secure.preview.emergentagent.com/api
 Development: http://localhost:8001/api
+Production:  https://<your-domain>/api
 ```
 
 ### Endpoints
@@ -481,9 +480,8 @@ This project is proprietary software. Unauthorized copying, modification, distri
 
 ## 📞 Support
 
-- 🌐 **Live Demo**: [replyai-secure.preview.emergentagent.com](https://replyai-secure.preview.emergentagent.com)
 - 📖 **Documentation**: See `ARCHITECTURE.md` and `PROJECT_SUMMARY.md`
-- 🐛 **Issues**: [Open a GitHub issue](https://github.com/yourusername/replyai/issues)
+- 🐛 **Issues**: [Open a GitHub issue](https://github.com/anuragkkumar/replyai/issues)
 - 📧 **Email**: support@replyai.com
 
 ---

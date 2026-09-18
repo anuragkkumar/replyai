@@ -45,7 +45,7 @@ const CareerPage = () => {
     <div className="min-h-screen flex flex-col">
       <div className="flex-1">
         {/* Hero Section */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 py-16 sm:py-20 text-center">
           <h1 className="text-5xl sm:text-6xl font-bold mb-4">
             We are hiring
           </h1>
@@ -55,7 +55,7 @@ const CareerPage = () => {
         </div>
 
         {/* Open Positions Section */}
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 xl:px-10 pb-20">
           <h2 className="text-3xl font-bold mb-8">Open Positions</h2>
           
           <div className="grid gap-6">

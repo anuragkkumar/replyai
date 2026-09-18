@@ -12,193 +12,262 @@
     }
 
     body {
-      width: 380px;
-      min-height: 400px;
+      width: 360px;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #0B0B10;
-      color: #F4F4F7;
+      background: #08120D;
+      color: #F0FDF4;
       padding: 16px;
     }
 
     .header {
       display: flex;
       align-items: center;
-      gap: 8px;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #26263A;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #1C2E22;
     }
 
-    .header-icon {
-      width: 24px;
-      height: 24px;
-      color: #534AB7;
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-badge {
+      width: 22px;
+      height: 22px;
+      background: #10B981;
+      color: #04140B;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: bold;
     }
 
     .header h1 {
-      font-size: 18px;
-      font-weight: 600;
-      background: linear-gradient(135deg, #534AB7, #6259D6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: #F0FDF4;
+      font-family: monospace;
     }
 
     .status {
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      background: #141423;
-      border: 1px solid #26263A;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      font-size: 12px;
+      gap: 6px;
+      font-size: 11px;
+      color: #A7B5AD;
+      font-family: monospace;
     }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
     }
 
     .status-dot.active {
-      background: #2FBF71;
-      box-shadow: 0 0 8px #2FBF71;
+      background: #10B981;
+      box-shadow: 0 0 6px #10B981;
     }
 
     .status-dot.inactive {
-      background: #E5484D;
+      background: #84CC16;
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: #A7B5AD;
+      margin-bottom: 6px;
+      font-family: monospace;
+    }
+
+    .input-box {
+      width: 100%;
+      height: 72px;
+      padding: 8px 10px;
+      background: #0F1F16;
+      border: 1px solid #1C2E22;
+      border-radius: 6px;
+      color: #F0FDF4;
+      font-size: 12px;
+      line-height: 1.4;
+      resize: none;
+      font-family: inherit;
+      margin-bottom: 10px;
+      transition: border-color 0.15s ease;
+    }
+
+    .input-box:focus {
+      outline: none;
+      border-color: #10B981;
     }
 
     .mode-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 16px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
     }
 
     .mode-btn {
-      padding: 10px;
-      background: #141423;
-      border: 1px solid #26263A;
-      border-radius: 8px;
-      color: #F4F4F7;
-      font-size: 13px;
+      padding: 6px 4px;
+      background: #0F1F16;
+      border: 1px solid #1C2E22;
+      border-radius: 6px;
+      color: #A7B5AD;
+      font-size: 11px;
+      font-family: monospace;
       cursor: pointer;
       transition: all 150ms;
       text-align: center;
+      white-space: nowrap;
     }
 
     .mode-btn:hover {
-      border-color: #8B8BA3;
+      border-color: #10B981;
+      color: #F0FDF4;
     }
 
     .mode-btn.selected {
-      background: #534AB7;
-      border-color: #534AB7;
-      color: white;
+      background: #10B981;
+      border-color: #10B981;
+      color: #04140B;
+      font-weight: 700;
     }
 
     .custom-input {
       width: 100%;
-      padding: 10px;
-      background: #141423;
-      border: 1px solid #26263A;
-      border-radius: 8px;
-      color: #F4F4F7;
-      font-size: 13px;
-      margin-bottom: 12px;
+      padding: 8px 10px;
+      background: #0F1F16;
+      border: 1px solid #1C2E22;
+      border-radius: 6px;
+      color: #F0FDF4;
+      font-size: 12px;
+      margin-bottom: 10px;
       font-family: inherit;
     }
 
     .custom-input:focus {
       outline: none;
-      border-color: #534AB7;
+      border-color: #10B981;
     }
 
     .generate-btn {
       width: 100%;
-      padding: 12px;
-      background: #534AB7;
+      padding: 10px;
+      background: #10B981;
       border: none;
-      border-radius: 10px;
-      color: white;
-      font-size: 14px;
-      font-weight: 500;
+      border-radius: 6px;
+      color: #04140B;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: monospace;
       cursor: pointer;
-      transition: background 150ms;
-      margin-bottom: 12px;
+      transition: background 150ms, transform 100ms;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 10px rgba(16, 185, 129, 0.2);
     }
 
-    .generate-btn:hover {
-      background: #6259D6;
+    .generate-btn:hover:not(:disabled) {
+      background: #059669;
+    }
+
+    .generate-btn:active:not(:disabled) {
+      transform: translateY(1px);
     }
 
     .generate-btn:disabled {
-      background: #26263A;
-      color: #8B8BA3;
+      background: #14281D;
+      color: #6B7D73;
+      border: 1px solid #1C2E22;
       cursor: not-allowed;
+      box-shadow: none;
     }
 
     .output-box {
-      padding: 12px;
-      background: #141423;
-      border: 1px solid #26263A;
-      border-radius: 10px;
-      min-height: 100px;
-      margin-bottom: 12px;
-      font-size: 13px;
+      padding: 10px 12px;
+      background: #0F1F16;
+      border: 1px solid #1C2E22;
+      border-radius: 6px;
+      min-height: 80px;
+      max-height: 140px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+      font-size: 12px;
       line-height: 1.5;
+      color: #F0FDF4;
+      white-space: pre-wrap;
     }
 
     .output-box.empty {
-      color: #8B8BA3;
+      color: #6B7D73;
       display: flex;
       align-items: center;
       justify-content: center;
       text-align: center;
+      font-size: 11px;
     }
 
     .copy-btn {
       width: 100%;
-      padding: 10px;
-      background: #19192B;
-      border: 1px solid #26263A;
-      border-radius: 8px;
-      color: #F4F4F7;
-      font-size: 13px;
+      padding: 8px;
+      background: #14281D;
+      border: 1px solid #1C2E22;
+      border-radius: 6px;
+      color: #F0FDF4;
+      font-size: 12px;
+      font-family: monospace;
+      font-weight: 600;
       cursor: pointer;
       transition: all 150ms;
     }
 
     .copy-btn:hover {
-      border-color: #8B8BA3;
+      border-color: #10B981;
+      color: #10B981;
     }
 
     .footer {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid #26263A;
-      text-align: center;
-      font-size: 11px;
-      color: #8B8BA3;
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid #1C2E22;
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      font-family: monospace;
+      color: #6B7D73;
     }
 
     .error {
-      padding: 8px 12px;
-      background: rgba(229, 72, 77, 0.1);
-      border: 1px solid #E5484D;
-      border-radius: 8px;
-      color: #F4F4F7;
-      font-size: 12px;
-      margin-bottom: 12px;
+      padding: 6px 10px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #EF4444;
+      border-radius: 6px;
+      color: #EF4444;
+      font-size: 11px;
+      margin-bottom: 10px;
+      font-family: monospace;
     }
 
     .loading {
       text-align: center;
-      color: #8B8BA3;
-      font-size: 13px;
+      color: #10B981;
+      font-size: 12px;
+      font-family: monospace;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
 
     .hidden {
@@ -208,47 +277,60 @@
 </head>
 <body>
   <div class="header">
-    <svg class="header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M12 3l9 4.5v9L12 21l-9-4.5v-9L12 3z"/>
-      <path d="M12 12l9-4.5M12 12v9M12 12L3 7.5"/>
-    </svg>
-    <h1>ReplyAI</h1>
+    <div class="header-left">
+      <div class="logo-badge">&gt;_</div>
+      <h1>replyai</h1>
+    </div>
+    <div class="status" id="status">
+      <div class="status-dot inactive" id="statusDot"></div>
+      <span id="statusText">Ready</span>
+    </div>
   </div>
 
-  <div class="status" id="status">
-    <div class="status-dot inactive" id="statusDot"></div>
-    <span id="statusText">Open a chat app first</span>
+  <div class="label-row">
+    <span>CONVERSATION // CONTEXT</span>
+  </div>
+
+  <textarea 
+    class="input-box" 
+    id="contextInput" 
+    placeholder="Paste incoming message or chat here..."
+  ></textarea>
+
+  <div class="label-row">
+    <span>SELECT TONE</span>
   </div>
 
   <div class="mode-grid" id="modeGrid">
-    <button class="mode-btn selected" data-mode="flirty">💋 Flirty</button>
-    <button class="mode-btn" data-mode="funny">😂 Funny</button>
-    <button class="mode-btn" data-mode="professional">💼 Professional</button>
-    <button class="mode-btn" data-mode="roast">🔥 Roast</button>
-    <button class="mode-btn" data-mode="savage">⚡ Savage</button>
-    <button class="mode-btn" data-mode="custom">✏️ Custom</button>
+    <button class="mode-btn selected" data-mode="flirty">.flirty</button>
+    <button class="mode-btn" data-mode="funny">.funny</button>
+    <button class="mode-btn" data-mode="professional">.corp</button>
+    <button class="mode-btn" data-mode="roast">.roast</button>
+    <button class="mode-btn" data-mode="savage">.savage</button>
+    <button class="mode-btn" data-mode="custom">.custom</button>
   </div>
 
   <input 
     type="text" 
     class="custom-input hidden" 
     id="customInput" 
-    placeholder="Describe your tone..."
+    placeholder="Describe your custom tone..."
     maxlength="200"
   />
 
   <div class="error hidden" id="error"></div>
 
-  <button class="generate-btn" id="generateBtn" disabled>Generate Reply</button>
+  <button class="generate-btn" id="generateBtn">[ GENERATE REPLY ]</button>
 
   <div class="output-box empty" id="output">
-    Open a supported chat app to get started
+    Click generate to synthesize reply
   </div>
 
-  <button class="copy-btn hidden" id="copyBtn">Copy Reply</button>
+  <button class="copy-btn hidden" id="copyBtn">[ COPY REPLY ]</button>
 
   <div class="footer">
-    Powered by Groq
+    <span>RAM-ONLY ZERO LOGS</span>
+    <span>v1.2</span>
   </div>
 
   <script src="popup.js"></script>

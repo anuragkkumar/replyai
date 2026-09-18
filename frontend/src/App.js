@@ -8,22 +8,37 @@ import HowItWorks from './pages/HowItWorks';
 import GetExtension from './pages/GetExtension';
 import BlogPage from './pages/BlogPage';
 import CareerPage from './pages/CareerPage';
+import { PixelCanvas } from './components/ui/pixel-canvas';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import './App.css';
 
-function App() {
+function AppContent() {
+  const { isDark } = useTheme();
+
   return (
-    <Router>
-      <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] relative overflow-x-hidden transition-colors duration-200">
+      {/* Global Interactive Pixel Canvas Background (styled per theme) */}
+      <div className={`fixed inset-0 z-0 pointer-events-none transition-opacity duration-300 ${isDark ? 'opacity-40' : 'opacity-20'}`}>
+        <PixelCanvas
+          gap={14}
+          speed={0.025}
+          colors={isDark ? ["#10B981", "#84CC16", "#059669", "#34D399", "#A7F3D0"] : ["#059669", "#65A30D", "#10B981", "#34D399"]}
+          variant="glow"
+          globalTracking={true}
+        />
+      </div>
+
+      <div className="relative z-10 flex flex-col min-h-screen">
         <Routes>
-          {/* Landing Page */}
-          <Route path="/" element={
-            <>
-              <GeneratorNavbar />
-              <main>
-                <LandingPage />
-              </main>
-            </>
-          } />
+            {/* Landing Page */}
+            <Route path="/" element={
+              <>
+                <GeneratorNavbar />
+                <main>
+                  <LandingPage />
+                </main>
+              </>
+            } />
           
           {/* Generator Page */}
           <Route path="/generator" element={<GeneratorPage />} />
@@ -62,10 +77,21 @@ function App() {
             </>
           } />
         </Routes>
-        <Toaster position="top-center" theme="dark" />
+        </div>
+        <Toaster position="top-center" theme={isDark ? "dark" : "light"} />
       </div>
-    </Router>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </ThemeProvider>
   );
 }
 
 export default App;
+

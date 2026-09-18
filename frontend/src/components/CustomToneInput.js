@@ -1,24 +1,29 @@
 import React from 'react';
-import { Card } from './ui/card';
-import { Input } from './ui/input';
+import { Sliders, Terminal } from 'lucide-react';
 
 const CustomToneInput = ({ customTone, setCustomTone }) => {
   return (
-    <Card className="bg-[var(--surface)] border border-[var(--border)] rounded-[var(--radius-lg)] p-4">
-      <label className="text-sm font-medium mb-2 block" htmlFor="custom-tone">
-        Describe your tone
-      </label>
-      <Input
+    <div className="terminal-card p-4 border border-[#1C2E22] bg-[#0F1F16]">
+      <div className="flex items-center justify-between mb-2 font-mono text-xs">
+        <span className="text-[#A7B5AD] flex items-center gap-1.5">
+          <Sliders className="w-3.5 h-3.5 text-[#10B981]" />
+          CUSTOM_PERSONA_DIRECTIVE
+        </span>
+        <span className="text-[10px] text-[#84CC16]">PROMPT_OVERRIDE</span>
+      </div>
+      <input
         id="custom-tone"
+        type="text"
         data-testid="mode-custom-input"
-        placeholder="e.g., Reply like a motivational coach"
+        placeholder="e.g. 'Sarcastic British aristocrat', 'Concise VC investor', 'Gordon Ramsay'..."
         value={customTone}
         onChange={(e) => setCustomTone(e.target.value)}
         maxLength={200}
-        className="bg-[var(--bg-2)] border-[var(--border)] text-[var(--text)] placeholder:text-[var(--text-3)]"
+        className="w-full h-11 bg-[#08120D] border border-[#1C2E22] focus:border-[#10B981] px-3.5 rounded-[4px] text-xs font-mono text-[#F0FDF4] placeholder-[#6B7D73] transition-colors"
       />
-    </Card>
+    </div>
   );
 };
 
 export default CustomToneInput;
+

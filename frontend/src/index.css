@@ -1,54 +1,144 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* Dark Mode Colors (default) */
-  --bg: #0B0B10;
-  --bg-2: #0F0F16;
-  --surface: #141423;
-  --surface-2: #19192B;
-  --border: #26263A;
-  --text: #F4F4F7;
-  --text-2: #B7B7C9;
-  --text-3: #8B8BA3;
-  --primary: #534AB7;
-  --primary-hover: #6259D6;
-  --primary-pressed: #463FA0;
-  --primary-contrast: #FFFFFF;
-  --focus: #7A72E8;
-  --success: #2FBF71;
-  --warning: #F0B429;
-  --danger: #E5484D;
-  --info: #3B82F6;
+  /* Midnight Emerald Palette (Dark Mode - Default) */
+  --bg: #08120D;
+  --bg-2: #0B1711;
+  --surface: #0F1F16;
+  --surface-2: #14281D;
+  --surface-3: #183124;
+  --border: #1C2E22;
+  --border-subtle: #16241B;
+  --border-focus: #10B981;
+  
+  --text: #F0FDF4;
+  --text-2: #A7B5AD;
+  --text-3: #6B7D73;
+  
+  --primary: #10B981;
+  --primary-hover: #059669;
+  --primary-pressed: #047857;
+  --primary-contrast: #04140B;
+  
+  --accent: #84CC16;
+  --accent-dim: rgba(132, 204, 22, 0.12);
+  
+  --focus: #10B981;
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+  --info: #06B6D4;
   
   /* Typography */
-  --font-sans: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New";
-  --tracking-tight: -0.02em;
-  --tracking-normal: 0em;
-  --leading-tight: 1.15;
-  --leading-normal: 1.5;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --tracking-tight: -0.03em;
+  --tracking-normal: -0.01em;
   
-  /* Radii */
-  --radius-sm: 10px;
-  --radius-md: 14px;
-  --radius-lg: 18px;
+  /* Sharp & Crisp Radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
   
-  /* Shadows */
-  --shadow-1: 0 1px 0 rgba(255,255,255,0.04);
-  --shadow-2: 0 10px 30px rgba(0,0,0,0.45);
+  /* Subtle Tactile Shadows */
+  --shadow-1: 0 1px 2px rgba(0,0,0,0.5);
+  --shadow-2: 0 12px 30px rgba(0,0,0,0.65);
+}
+
+/* Crisp Technical Light Theme (Ivory Mint) */
+html.light {
+  --bg: #F5FBF7;
+  --bg-2: #EAF4EE;
+  --surface: #FFFFFF;
+  --surface-2: #EDF7F1;
+  --surface-3: #E1F0E7;
+  --border: #D1E5D8;
+  --border-subtle: #E2EFE7;
+  --border-focus: #059669;
   
-  /* Spacing */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-7: 48px;
+  --text: #0D1C13;
+  --text-2: #385141;
+  --text-3: #5B7264;
+  
+  --primary: #059669;
+  --primary-hover: #047857;
+  --primary-pressed: #065F46;
+  --primary-contrast: #FFFFFF;
+  
+  --accent: #65A30D;
+  --accent-dim: rgba(101, 163, 13, 0.15);
+  
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-2: 0 10px 25px rgba(13, 28, 19, 0.08);
+}
+
+/* Universal Light Theme Adapters for Tailwind dark palette classes */
+html.light body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+html.light .bg-\[\#08120D\],
+html.light .bg-\[\#0B1711\],
+html.light .bg-\[\#0A1710\] {
+  background-color: var(--bg) !important;
+}
+
+html.light .bg-\[\#0F1F16\] {
+  background-color: var(--surface) !important;
+}
+
+html.light .bg-\[\#14281D\],
+html.light .bg-\[\#183124\] {
+  background-color: var(--surface-2) !important;
+}
+
+html.light .border-\[\#1C2E22\],
+html.light .border-\[\#16241B\],
+html.light .border-\[\#2B4533\] {
+  border-color: var(--border) !important;
+}
+
+html.light .text-\[\#F0FDF4\] {
+  color: var(--text) !important;
+}
+
+html.light .text-\[\#A7B5AD\] {
+  color: var(--text-2) !important;
+}
+
+html.light .text-\[\#6B7D73\] {
+  color: var(--text-3) !important;
+}
+
+html.light .placeholder-\[\#6B7D73\]::placeholder {
+  color: var(--text-3) !important;
+}
+
+html.light .text-\[\#84CC16\] {
+  color: #15803D !important;
+}
+
+html.light .border-\[\#84CC16\] {
+  border-color: #15803D !important;
+}
+
+html.light input,
+html.light textarea,
+html.light select {
+  color: var(--text);
+}
+
+.grecaptcha-badge {
+  opacity: 0.15;
+  transition: opacity 0.2s ease;
+}
+.grecaptcha-badge:hover {
+  opacity: 1;
 }
 
 * {
@@ -61,12 +151,13 @@ body {
   font-family: var(--font-sans);
   background-color: var(--bg);
   color: var(--text);
-  line-height: var(--leading-normal);
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-code {
+code, pre, .font-mono {
   font-family: var(--font-mono);
 }
 
@@ -78,3 +169,107 @@ code {
     @apply bg-[var(--bg)] text-[var(--text)];
   }
 }
+
+@layer utilities {
+  /* Subtle Technical Grid Pattern */
+  .bg-emerald-grid {
+    background-size: 32px 32px;
+    background-image: 
+      linear-gradient(to right, rgba(16, 185, 129, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(16, 185, 129, 0.04) 1px, transparent 1px);
+  }
+
+  html.light .bg-emerald-grid {
+    background-image: 
+      linear-gradient(to right, rgba(13, 28, 19, 0.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(13, 28, 19, 0.035) 1px, transparent 1px);
+  }
+
+  /* Scanline effect */
+  .bg-scanline {
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%, 
+      rgba(0, 0, 0, 0.25) 50%
+    ), linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.02),
+      rgba(0, 255, 0, 0.01),
+      rgba(0, 0, 255, 0.02)
+    );
+    background-size: 100% 3px, 6px 100%;
+  }
+
+  /* Sharp Terminal Card */
+  .terminal-card {
+    background-color: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+    @apply relative border rounded-md transition-all duration-200;
+  }
+  .terminal-card:hover {
+    border-color: var(--border-focus);
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.08);
+  }
+  html.light .terminal-card {
+    box-shadow: 0 4px 20px -2px rgba(13, 28, 19, 0.05), 0 1px 3px rgba(13, 28, 19, 0.03);
+  }
+  html.light .terminal-card:hover {
+    box-shadow: 0 12px 25px -4px rgba(5, 150, 105, 0.12), 0 1px 3px rgba(13, 28, 19, 0.04);
+  }
+
+  /* Sharp Bracket Button */
+  .bracket-btn {
+    background-color: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+    @apply inline-flex items-center gap-2 px-5 py-2.5 border font-mono text-sm font-medium transition-all duration-150 hover:text-[var(--primary)] active:translate-y-0.5 select-none rounded-[4px];
+  }
+  .bracket-btn:hover {
+    background-color: var(--surface-2);
+    border-color: var(--primary);
+  }
+  
+  .bracket-btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--primary-contrast);
+    @apply inline-flex items-center gap-2 px-6 py-2.5 border font-mono text-sm font-semibold transition-all duration-150 active:translate-y-0.5 select-none rounded-[4px] shadow-[0_2px_12px_rgba(16,185,129,0.25)];
+  }
+  .bracket-btn-primary:hover {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+  }
+
+  /* Micro Dot Matrix Texture */
+  .bg-dot-matrix {
+    background-image: radial-gradient(rgba(16, 185, 129, 0.08) 1px, transparent 1px);
+    background-size: 16px 16px;
+  }
+
+  /* Shimmer sweep animation */
+  @keyframes sweepShimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .btn-shimmer {
+    background: linear-gradient(
+      90deg,
+      #10B981 0%,
+      #34D399 25%,
+      #84CC16 50%,
+      #34D399 75%,
+      #10B981 100%
+    );
+    background-size: 200% auto;
+  }
+  .btn-shimmer:hover {
+    animation: sweepShimmer 1.8s linear infinite;
+  }
+}
+
+

@@ -62,6 +62,7 @@ if not groq_api_key:
     raise ValueError("GROQ_API_KEY environment variable is required")
 
 groq_client = Groq(api_key=groq_api_key)
+GROQ_MODEL = os.getenv("GROQ_MODEL", "groq/compound-mini")
 
 # Mode enum
 class ReplyMode(str, Enum):
@@ -142,10 +143,10 @@ def record_fingerprint_request(fingerprint: str):
     fp_data = fingerprint_requests[fingerprint]
     fp_data["daily"] += 1
 
-async def verify_recaptcha(token: str, ip: str) -> bool:
+async def verify_recaptcha(token: Optional[str], ip: str) -> bool:
     """Verify reCAPTCHA token"""
-    if not RECAPTCHA_SECRET_KEY:
-        return True  # Skip if no key configured
+    if token == "extension" or not token or not RECAPTCHA_SECRET_KEY:
+        return True  # Skip if extension request or no key configured
     
     try:
         async with httpx.AsyncClient() as client:
@@ -195,7 +196,7 @@ class GenerateRequest(BaseModel):
     custom_tone: Optional[str] = Field(None, max_length=200)
     conversation_history: Optional[List[str]] = Field(default=[], max_items=50)
     context: Optional[str] = Field(None, max_length=500)
-    recaptcha_token: str = Field(..., min_length=1)
+    recaptcha_token: Optional[str] = Field(default="extension", max_length=1000)
     fingerprint: Optional[str] = Field(None, max_length=64)
     honeypot: Optional[str] = Field(None, max_length=0)  # Should always be empty
     
@@ -220,7 +221,8 @@ class GenerateRequest(BaseModel):
 
 # Response model
 class GenerateResponse(BaseModel):
-    replies: List[str]  # Changed from single reply to list of 3
+    reply: Optional[str] = None
+    replies: List[str]  # Returns 3 replies
     mode: str
     style: str
     timestamp: str
@@ -447,7 +449,7 @@ async def generate_reply(request: Request, data: GenerateRequest) -> GenerateRes
         replies = []
         for i in range(3):
             response = groq_client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+                model=GROQ_MODEL,
                 messages=messages,
                 temperature=0.7 + (i * 0.1),  # Slightly different temperature for variety
                 max_tokens=150,
@@ -460,6 +462,7 @@ async def generate_reply(request: Request, data: GenerateRequest) -> GenerateRes
             record_fingerprint_request(data.fingerprint)
         
         return GenerateResponse(
+            reply=replies[0] if replies else "",
             replies=replies,
             mode=data.mode.value,
             style=data.style.value,
@@ -497,7 +500,7 @@ async def translate_text(request: Request, data: TranslateRequest) -> TranslateR
         target_lang = language_map[data.target_language]
         
         response = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model=GROQ_MODEL,
             messages=[
                 {
                     "role": "system",

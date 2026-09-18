@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import GeneratorNavbar from '../components/GeneratorNavbar';
-import ConversationInput from '../components/ConversationInput';
-import ModeSelector from '../components/ModeSelector';
-import CustomToneInput from '../components/CustomToneInput';
-import ErrorAlert from '../components/ErrorAlert';
-import GenerateButton from '../components/GenerateButton';
-import ReplyOutput from '../components/ReplyOutput';
+import UnifiedWorkspace from '../components/UnifiedWorkspace';
 import Footer from '../components/Footer';
-import StyleToggle from '../components/StyleToggle';
-import ConversationMemory from '../components/ConversationMemory';
 import { toast } from 'sonner';
 import { validateInput, handleApiError, generateFingerprint } from '../utils/homepageHelpers';
 import { 
@@ -215,7 +208,24 @@ const GeneratorPage = () => {
       <GeneratorNavbar />
 
       {/* Generator Section */}
-      <div className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
+      <div className="flex-1 max-w-[1600px] mx-auto w-full px-4 sm:px-6 lg:px-8 xl:px-10 py-6 sm:py-10">
+        
+        {/* Clean, Simple Header */}
+        <div className="mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-5 border-b border-[var(--border)]">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-[var(--text)] tracking-tight">
+              Real-time response synthesizer
+            </h1>
+            <p className="text-xs sm:text-sm text-[var(--text-2)] mt-1 font-sans">
+              Type or paste a message to generate articulate, high-leverage replies.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 text-xs font-mono text-[var(--text-3)]">
+            <span className="w-2 h-2 rounded-full bg-[var(--primary)] animate-pulse" />
+            <span>Groq Llama-3.3 • 200ms latency</span>
+          </div>
+        </div>
+
         {/* Honeypot field */}
         <input
           type="text"
@@ -228,67 +238,35 @@ const GeneratorPage = () => {
           aria-hidden="true"
         />
 
-        {/* Main Grid - Single column on mobile, 2 columns on large screens */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left Column - Input */}
-          <div className="space-y-6">
-            <ConversationInput 
-              conversation={conversation}
-              setConversation={setConversation}
-              charCount={charCount}
-              isNearLimit={isNearLimit}
-              isAtLimit={isAtLimit}
-              onImageUpload={handleImageUpload}
-              onAudioUpload={handleAudioUpload}
-              uploadingFile={uploadingFile}
-            />
-            
-            <ConversationMemory 
-              contextMemory={contextMemory}
-              setContextMemory={setContextMemory}
-              conversationHistory={conversationHistory}
-              onClearHistory={clearHistory}
-            />
-            
-            <StyleToggle 
-              selectedStyle={selectedStyle}
-              setSelectedStyle={setSelectedStyle}
-            />
-
-            <ModeSelector 
-              selectedMode={selectedMode}
-              setSelectedMode={setSelectedMode}
-            />
-
-            {selectedMode === 'custom' && (
-              <CustomToneInput 
-                customTone={customTone}
-                setCustomTone={setCustomTone}
-              />
-            )}
-
-            <ErrorAlert error={error} />
-
-            <GenerateButton 
-              loading={loading}
-              isAtLimit={isAtLimit}
-              hasConversation={conversation.trim().length > 0}
-              onGenerate={generateReply}
-              requestCount={requestCount}
-            />
-          </div>
-
-          {/* Right Column - Output */}
-          <div className="lg:sticky lg:top-20 lg:self-start">
-            <ReplyOutput 
-              reply={replies[0] || ''}
-              loading={loading}
-              copied={copied}
-              copyToClipboard={() => copyToClipboard(replies[0])}
-              regenerate={regenerate}
-            />
-          </div>
-        </div>
+        {/* Unified Clean Workspace Card */}
+        <UnifiedWorkspace
+          conversation={conversation}
+          setConversation={setConversation}
+          charCount={charCount}
+          isNearLimit={isNearLimit}
+          isAtLimit={isAtLimit}
+          onImageUpload={handleImageUpload}
+          onAudioUpload={handleAudioUpload}
+          uploadingFile={uploadingFile}
+          selectedMode={selectedMode}
+          setSelectedMode={setSelectedMode}
+          selectedStyle={selectedStyle}
+          setSelectedStyle={setSelectedStyle}
+          customTone={customTone}
+          setCustomTone={setCustomTone}
+          error={error}
+          loading={loading}
+          onGenerate={generateReply}
+          reply={replies[0] || ''}
+          copied={copied}
+          copyToClipboard={() => copyToClipboard(replies[0])}
+          regenerate={regenerate}
+          contextMemory={contextMemory}
+          setContextMemory={setContextMemory}
+          conversationHistory={conversationHistory}
+          clearHistory={clearHistory}
+          requestCount={requestCount}
+        />
       </div>
 
       <Footer />

@@ -273,6 +273,3 @@ All rights reserved © 2026 ReplyAI
 **Developed by Anurag Kumar**
 LinkedIn: https://www.linkedin.com/in/anuragkumarse
 
----
-
-**Live Demo**: https://replyai-secure.preview.emergentagent.com
